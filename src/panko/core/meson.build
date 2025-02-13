@@ -6,6 +6,7 @@ libpanko_srcs += files([
 
 libpanko_core_headers = files([
 	'paths.hh',
+	'units.hh',
 ])
 
 install_headers(libpanko_core_headers, subdir: 'panko/core')
