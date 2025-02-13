@@ -6,6 +6,7 @@ libpanko_srcs += files([
 
 libpanko_core_headers = files([
 	'paths.hh',
+	'types.hh',
 	'units.hh',
 ])
 
