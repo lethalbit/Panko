@@ -1,0 +1,59 @@
+
+option(
+	'mtune',
+	type: 'combo',
+	choices: ['default', 'x86-64', 'x86-64-v2', 'x86-64-v3', 'x86-64-v4', 'native'],
+	value: 'default',
+	description: 'Specify the -mtune param to use in supported compilers'
+)
+
+option(
+	'dissectors',
+	type: 'array',
+	choices: [
+
+	],
+	description: 'List of packet dissectors to build'
+)
+
+option(
+	'gui',
+	type: 'feature',
+	value: 'enabled',
+	description: 'Build Panko GUI'
+)
+
+option(
+	'cli',
+	type: 'feature',
+	value: 'enabled',
+	description: 'Build Panko CLI'
+)
+
+option(
+	'enable_tests',
+	type: 'boolean',
+	value: true,
+	description: 'Enable tests'
+)
+
+option(
+	'enable_fuzzing',
+	type: 'boolean',
+	value: true,
+	description: 'Enable libfuzzer based tests (only supported on clang)'
+)
+
+option(
+	'kde_integration',
+	type: 'feature',
+	value: 'enabled',
+	description: 'Enable KDE integration using KF6 (only if gui is being built)'
+)
+
+option(
+	'bugreport_url',
+	type: 'string',
+	value: 'https://github.com/lethalbit/Panko/issues/new',
+	description: 'URL for bug report submissions'
+)

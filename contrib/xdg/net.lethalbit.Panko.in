@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type = Application
+Version = 1.5
+Name = Panko
+GenericName = Packet Dissector
+NoDisplay = false
+Comment = Crispy and Fried modern packet dissection
+Icon = net.lethalbit.Panko
+DBusActivatable = false
+Exec = @BINARY_PATH@ %f
+Terminal = false
+Categories = Science;Engineering
+MimeType = application/x-panko-pcap;application/x-panko-pcapng

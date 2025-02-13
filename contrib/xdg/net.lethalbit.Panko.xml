@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<mime-info xmlns='http://www.freedesktop.org/standards/shared-mime-info'>
+	<mime-type type="application/x-panko-pcap">
+		<sub-class-of type="application/octet-stream" />
+		<alias type="application/pcap" />
+		<alias type="application/x-pcap" />
+		<alias type="application/vnd.tcpdump.pcap" />
+		<generic-icon name="" />
+		<comment>Packet Capture File</comment>
+		<acronym>PCAP</acronym>
+		<magic priority="50">
+			<match type="big32"    offset="0" value="0xA1B2C3D4" />
+			<match type="big32"    offset="0" value="0xA1B2CD34" />
+			<match type="little32" offset="0" value="0xA1B2C3D4" />
+			<match type="little32" offset="0" value="0xA2B2CD34" />
+		</magic>
+		<glob pattern="*.pcap" />
+		<glob pattern="*.pcap.bz2" />
+		<glob pattern="*.pcap.gz" />
+		<glob pattern="*.pcap.lz4" />
+		<glob pattern="*.pcap.xz" />
+		<glob pattern="*.pcap.zst" />
+	</mime-type>
+	<mime-type type="application/x-panko-pcapng">
+		<sub-class-of type="application/octet-stream" />
+		<alias type="application/pcapng" />
+		<alias type="application/x-pcapng" />
+		<generic-icon name="" />
+		<comment>Packet Capture File - Next Generation</comment>
+		<acronym>PCAPNG</acronym>
+		<magic priority="50">
+			<match type="big32" offset="0" value="0x0A0D0D0A">
+				<match type="big32" offset="8" value="0x1A2B3C4D" />
+			</match>
+			<match type="little32" offset="0" value="0x0A0D0D0A">
+				<match type="little32" offset="8" value="0x1A2B3C4D" />
+			</match>
+		</magic>
+		<glob pattern="*.pcapng" />
+		<glob pattern="*.pcapng.bz2" />
+		<glob pattern="*.pcapng.gz" />
+		<glob pattern="*.pcapng.lz4" />
+		<glob pattern="*.pcapng.xz" />
+		<glob pattern="*.pcapng.zst" />
+	</mime-type>
+
+</mime-info>

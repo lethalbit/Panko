@@ -1,0 +1,11 @@
+*
+!.gitignore
+!bzip2.wrap
+!doctest.wrap
+!liblzma.wrap
+!lua.wrap
+!lz4.wrap
+!pybind11.wrap
+!spdlog.wrap
+!zlib.wrap
+!zstd.wrap

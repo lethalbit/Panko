@@ -1,0 +1,5 @@
+/build
+/.vscode
+# Python virtual envs for docs
+/.venv
+/.env

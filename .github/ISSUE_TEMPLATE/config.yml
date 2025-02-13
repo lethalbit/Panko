@@ -1,0 +1,7 @@
+contact_links:
+  - name: Discussion
+    url: https://github.com/lethalbit/Panko/discussions
+    about: Have a question? Ask in our discussion fourm, or on IRC below!
+  - name: IRC Channel
+    url: https://web.libera.chat/#panko
+    about: "#panko on irc.libera.chat"
