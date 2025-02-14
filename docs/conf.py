@@ -4,7 +4,7 @@ from pathlib    import Path
 from datetime   import date
 from subprocess import check_output
 
-PANKO_ROOT  = Path(__file__).resolve().parent
+PANKO_ROOT  = Path(__file__).resolve().parent.parent
 PANKO_SRC   = PANKO_ROOT / 'src'
 PANKO_DOCS  = PANKO_ROOT / 'docs'
 PANKO_BUILD = PANKO_ROOT / 'build'
