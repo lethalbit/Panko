@@ -5,8 +5,11 @@
 #if !defined(PANKO_CORE_TYPES_HH)
 #define PANKO_CORE_TYPES_HH
 
+#include <array>
 #include <cstddef>
+#include <cstdint>
 #include <type_traits>
+#include <utility>
 
 #include <sys/types.h>
 
@@ -23,6 +26,19 @@ namespace Panko::core::types {
 		using mode_t = std::int32_t;
 		using off_t = std::int64_t;
 	#endif
+
+	inline namespace _impl {
+		template<typename T, std::size_t N, std::size_t... idx>
+		// NOLINTNEXTLINE(cppcoreguidelines-avoid-c-arrays,modernize-avoid-c-arrays)
+		constexpr std::array<T, N> make_array(T (&&elems)[N], std::index_sequence<idx...>) noexcept {
+			return {{elems[idx]...}};
+		}
+	}
+	template<typename T, std::size_t N>
+	// NOLINTNEXTLINE(cppcoreguidelines-avoid-c-arrays,modernize-avoid-c-arrays)
+	constexpr std::array<T, N> make_array(T (&&elems)[N]) noexcept {
+		return _impl::make_array(std::move(elems), std::make_index_sequence<N>{});
+	}
 }
 
 #endif /* PANKO_CORE_TYPES_HH */
