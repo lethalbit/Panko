@@ -37,6 +37,9 @@ namespace Panko::support {
 	>;
 
 	[[nodiscard]]
+	PANKO_API const io::io_t& decompose_file_variant(const file_t& file_var) noexcept;
+
+	[[nodiscard]]
 	PANKO_API std::optional<file_t> open(const fs::path& filename) noexcept;
 
 	[[nodiscard]]

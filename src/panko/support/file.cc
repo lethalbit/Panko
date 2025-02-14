@@ -8,6 +8,7 @@
 
 #include "panko/core/errcodes.hh"
 #include "panko/core/units.hh"
+#include "panko/core/types.hh"
 
 #include "panko/support/io/io.hh"
 #include "panko/support/io/raw_file.hh"
@@ -24,6 +25,7 @@ namespace Panko::support {
 	using namespace Panko::core::units::IEC;
 
 	using Panko::core::error_codes::file_error_t;
+	using Panko::core::types::match_t;
 
 	using Panko::support::io::io_t;
 	using Panko::support::io::raw_file_t;
@@ -33,6 +35,18 @@ namespace Panko::support {
 	using Panko::support::io::compressed::lzma_file_t;
 	using Panko::support::io::compressed::xz_file_t;
 	using Panko::support::io::compressed::zstd_file_t;
+
+
+	[[nodiscard]]
+	const io::io_t& decompose_file_variant(const file_t& file_var) noexcept {
+		const auto &file{std::visit(match_t{
+			[](const auto &entry) -> const io::io_t & {
+				return entry;
+			}
+		}, file_var)};
+
+		return file;
+	}
 
 	[[nodiscard]]
 	std::optional<file_t> open(const fs::path& filename) noexcept {
