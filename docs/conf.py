@@ -25,6 +25,7 @@ panko_version = get_version()
 
 project   = 'Panko'
 version   = panko_version
+revision  = version
 copyright = f'{date.today().year}, Panko Contributors'
 language  = 'en'
 
@@ -38,7 +39,6 @@ extensions = [
 	'sphinx_inline_tabs',
 	'sphinxext.opengraph',
 	'breathe',
-	'exhale',
 ]
 
 source_suffix = {
@@ -101,17 +101,3 @@ breathe_projects = {
 	project: f'{PANKO_DOXY_OUT}/xml',
 }
 breathe_default_project = project
-
-exhale_args = {
-	'containmentFolder': f'{PANKO_DOXY_API}',
-	'rootFileName': 'index.rst',
-	'rootFileTitle': 'Panko API',
-	'doxygenStripFromPath': f'{PANKO_SRC}/panko',
-	'createTreeView': True,
-	'exhaleExecutesDoxygen': True,
-	'exhaleDoxygenStdin': f'''
-	INPUT = {PANKO_SRC}/panko
-	EXCLUDE = {PANKO_SRC}/panko/internal
-	MACRO_EXPANSION = YES
-	'''
-}
