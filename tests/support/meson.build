@@ -104,7 +104,7 @@ if fuzzing_tests
 			'sys-fuzz.cc',
 			'@0@/src/panko/support/sys.cc'.format(meson.project_source_root()),
 		],
-		dependencies: [ doctest, ],
+		dependencies: [ ],
 		include_directories: [ root_inc ],
 		cpp_args: [ test_cxx_args, test_fuzz_cxx_args ],
 		link_args: [ test_link_args, test_fuzz_link_args ],
@@ -117,7 +117,7 @@ if fuzzing_tests
 			'file-fuzz.cc',
 			'@0@/src/panko/support/file.cc'.format(meson.project_source_root()),
 		],
-		dependencies: [ doctest, ],
+		dependencies: [ ],
 		include_directories: [ root_inc ],
 		cpp_args: [ test_cxx_args, test_fuzz_cxx_args ],
 		link_args: [ test_link_args, test_fuzz_link_args ],
@@ -127,7 +127,7 @@ if fuzzing_tests
 
 	raw_file_fuzz = executable(
 		'raw_file_fuzz', 'raw_file-fuzz.cc',
-		dependencies: [ doctest, ],
+		dependencies: [ ],
 		include_directories: [ root_inc ],
 		cpp_args: [ test_cxx_args, test_fuzz_cxx_args ],
 		link_args: [ test_link_args, test_fuzz_link_args ],
@@ -137,7 +137,7 @@ if fuzzing_tests
 
 	bz2_file_fuzz = executable(
 		'bz2_file_fuzz', 'bz2_file-fuzz.cc',
-		dependencies: [ doctest, bzip2, ],
+		dependencies: [ bzip2, ],
 		include_directories: [ root_inc ],
 		cpp_args: [ test_cxx_args, test_fuzz_cxx_args ],
 		link_args: [ test_link_args, test_fuzz_link_args ],
@@ -147,7 +147,7 @@ if fuzzing_tests
 
 	gzip_file_fuzz = executable(
 		'gzip_file_fuzz', 'gzip_file-fuzz.cc',
-		dependencies: [ doctest, zlib, ],
+		dependencies: [ zlib, ],
 		include_directories: [ root_inc ],
 		cpp_args: [ test_cxx_args, test_fuzz_cxx_args ],
 		link_args: [ test_link_args, test_fuzz_link_args ],
@@ -157,7 +157,7 @@ if fuzzing_tests
 
 	lz4_file_fuzz = executable(
 		'lz4_file_fuzz', 'lz4_file-fuzz.cc',
-		dependencies: [ doctest, lz4, ],
+		dependencies: [ lz4, ],
 		include_directories: [ root_inc ],
 		cpp_args: [ test_cxx_args, test_fuzz_cxx_args ],
 		link_args: [ test_link_args, test_fuzz_link_args ],
@@ -167,7 +167,7 @@ if fuzzing_tests
 
 	lzma_file_fuzz = executable(
 		'lzma_file_fuzz', 'lzma_file-fuzz.cc',
-		dependencies: [ doctest, liblzma, ],
+		dependencies: [ liblzma, ],
 		include_directories: [ root_inc ],
 		cpp_args: [ test_cxx_args, test_fuzz_cxx_args ],
 		link_args: [ test_link_args, test_fuzz_link_args ],
@@ -177,7 +177,7 @@ if fuzzing_tests
 
 	xz_file_fuzz = executable(
 		'xz_file_fuzz', 'xz_file-fuzz.cc',
-		dependencies: [ doctest, liblzma, ],
+		dependencies: [ liblzma, ],
 		include_directories: [ root_inc ],
 		cpp_args: [ test_cxx_args, test_fuzz_cxx_args ],
 		link_args: [ test_link_args, test_fuzz_link_args ],
@@ -187,7 +187,7 @@ if fuzzing_tests
 
 	zstd_file_fuzz = executable(
 		'zstd_file_fuzz', 'zstd_file-fuzz.cc',
-		dependencies: [ doctest, zstd, ],
+		dependencies: [ zstd, ],
 		include_directories: [ root_inc ],
 		cpp_args: [ test_cxx_args, test_fuzz_cxx_args ],
 		link_args: [ test_link_args, test_fuzz_link_args ],
