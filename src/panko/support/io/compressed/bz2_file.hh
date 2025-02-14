@@ -14,7 +14,7 @@ namespace Panko::support::io::compressed {
 	using Panko::support::io::raw_file_t;
 
 	struct bz2_file_t final : public io_t {
-		constexpr static std::uint64_t MAGIC_MASK{UINT64_C(0xFFFFFF00000000)};
+		constexpr static std::uint64_t MAGIC_MASK{UINT64_C(0xFFFFFF0000000000)};
 		constexpr static std::uint64_t MAGIC_VALUE{UINT64_C(0x425A680000000000)};
 
 		[[nodiscard]]
