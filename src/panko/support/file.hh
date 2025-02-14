@@ -37,10 +37,10 @@ namespace Panko::support {
 	>;
 
 	[[nodiscard]]
-	std::optional<file_t> open(const fs::path& filename) noexcept;
+	PANKO_API std::optional<file_t> open(const fs::path& filename) noexcept;
 
 	[[nodiscard]]
-	bool atomic_move(const fs::path& src, const fs::path& dest, bool clobber = false) noexcept;
+	PANKO_API bool atomic_move(const fs::path& src, const fs::path& dest, bool clobber = false) noexcept;
 }
 
 #endif /* PANKO_SUPPORT_FILE_HH */
