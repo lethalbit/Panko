@@ -35,6 +35,8 @@ if fuzzing_tests
 
 endif
 
+subdir('test-data')
+
 subdir('capture')
 subdir('core')
 subdir('dissectors')
