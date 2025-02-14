@@ -64,6 +64,7 @@ libpanko_srcs = files([
 subdir('capture')
 subdir('core')
 subdir('dissectors')
+subdir('filter')
 subdir('internal')
 subdir('support')
 
