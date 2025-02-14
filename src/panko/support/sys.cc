@@ -57,6 +57,10 @@ namespace Panko::support::sys {
 
 	[[nodiscard]]
 	fs::path expand_user(const std::string_view& path) noexcept {
+		if (path.size() < 2) {
+			return { path };
+		}
+
 		if (!path.empty() && path[0] == '~' && path[1] == '/') {
 			fs::path tmp{get_home()};
 			tmp.concat(path.substr(1, path.length()));
