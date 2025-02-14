@@ -4,4 +4,8 @@ libpanko_dissector_headers = files([
 
 ])
 
+libpanko_srcs += files([
+
+])
+
 install_headers(libpanko_dissector_headers, subdir: 'panko/dissectors')
