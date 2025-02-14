@@ -19,7 +19,7 @@ TODO(aki): Document
 The following steps describe how to build Panko, it should be consistent for Linux, macOS, and Windows, but macOS and Windows remain untested.
 
 > [!NOTE]
-> The minimum C++ standard to build Panko is C++20.
+> The minimum C++ standard to build Panko is C++23.
 
 ### Prerequisites
 
