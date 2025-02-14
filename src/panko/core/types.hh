@@ -39,6 +39,10 @@ namespace Panko::core::types {
 	constexpr std::array<T, N> make_array(T (&&elems)[N]) noexcept {
 		return _impl::make_array(std::move(elems), std::make_index_sequence<N>{});
 	}
+
+	/* For std::variant matching */
+	template<typename... Ts> struct match_t : Ts... { using Ts::operator()...; };
+	template<typename... Ts> match_t(Ts...) -> match_t<Ts...>;
 }
 
 #endif /* PANKO_CORE_TYPES_HH */
