@@ -5,6 +5,8 @@
 !liblzma.wrap
 !lua.wrap
 !lz4.wrap
+!protobuf.wrap
+!protobuf-mutator.wrap
 !pybind11.wrap
 !spdlog.wrap
 !zlib.wrap

@@ -67,6 +67,27 @@ subdir('dissectors')
 subdir('internal')
 subdir('support')
 
+panko_extra_cxx = [
+	global_defs, '-DPANKO_BUILD_INTERNAL',
+]
+panko_extra_link = []
+
+# If we are fuzzing, we need to massage things a bit
+if fuzzing_tests
+	panko_overrides = {
+		'b_lundef': false
+	}
+
+	panko_extra_cxx += [
+		'-fsanitize=address,undefined,fuzzer',
+	]
+	panko_extra_link += [
+		'-fsanitize=address,undefined,fuzzer',
+	]
+else
+	panko_overrides = {}
+endif
+
 libpanko = library(
 	'panko',
 	libpanko_srcs,
@@ -75,13 +96,15 @@ libpanko = library(
 		root_inc, include_directories('.'),
 	],
 	cpp_args: [
-		global_defs, '-DPANKO_BUILD_INTERNAL',
+
 	],
+	link_args: panko_extra_link,
 	gnu_symbol_visibility: 'inlineshidden',
 	dependencies: [
 		py.dependency(embed: true), pybind11, lua, threads, spdlog,
 		bzip2, liblzma, lz4, zlib, zstd
 	],
+	override_options: panko_overrides,
 	link_with: [],
 	install: true,
 )

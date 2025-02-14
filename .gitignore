@@ -1,4 +1,5 @@
 /build
+/build-fuzzing
 /.vscode
 # Python virtual envs for docs
 /.venv

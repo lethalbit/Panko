@@ -29,6 +29,29 @@ These are intended to be run from inside your build directory
 * Running tests: `ninja test` (`meson test`), or to view the raw output `meson test -v`
 * Debugging tests: `meson test --gdb`
 
+## Fuzzing
+
+If you are going to be running the fuzzing harnesses, then note the following dependencies are needed:
+
+* [protobuf]
+* [libprotobuf-mutator]
+* [llvm] >= 17
+* clang >= 17
+
+Both [protobuf] and [libprotobuf-mutator] will be handled by meson automatically when building.
+
+Fuzzing is only supported using clang, as gcc does not have `-fsanitize=fuzzer` support which is needed.
+
+To set up your fuzzing build directory, you can simply run the following from the source root:
+
+```
+$ CC=clang CXX=clang++ meson setup --buildtype debugoptimized -Db_sanitize=address,undefined build-fuzzing
+```
+
+The `enable_fuzzing` option is set by default, and so meson will handle all the setup for you.
+
+Some changes occur in this configuration, `b_lundef` is set to `false` as that breaks clang linking the sanitizers, and also the `b_sanitize` option is modified to include linking to the `fuzzer` sanitizer.
+
 ## Submitting a Pull Request
 
  1. [Fork] and clone the repository
@@ -55,3 +78,6 @@ We use rebasing to merge pull requests, so please keep this in mind and aim to k
 [`lsan_suppressions.txt`]: ./contrib/lsan_suppressions.txt
 [Fork]: https://github.com/lethalbit/Panko/fork
 [pull request]: https://github.com/lethalbit/Panko/compare
+[protobuf]: https://github.com/protocolbuffers/protobuf
+[libprotobuf-mutator]: https://github.com/google/libprotobuf-mutator
+[llvm]: https://llvm.org/

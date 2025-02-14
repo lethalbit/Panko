@@ -32,7 +32,6 @@ To build Panko, ensure you have the following build time dependencies:
 
 In addition, the following dependencies are needed to build but have built-in build support if not present on the build system:
 
-* [Doctest] (Only needed if building/running tests)
 * [libbzip2]
 * [liblzma]
 * [liblz4]
@@ -46,6 +45,15 @@ To build the GUI, you need the following in addition to the above:
 
 * [Qt6]
 * [KF6] (Only if on Linux and `KDE_INTEGRATION` is enabled)
+
+The following dependencies are needed for testing and fuzzing:
+
+* [Doctest]
+* [protobuf]
+* [libprotobuf-mutator]
+* [llvm] >= 17
+
+The [protobuf], [libprotobuf-mutator], and [llvm] dependencies are only needed if you're doing fuzzing, otherwise only [Doctest] is used.
 
 ### Configuring
 
@@ -83,6 +91,9 @@ The documentation is licensed under the Creative Commons [CC-BY-SA 4.0] and can 
 [PCAPNG]: https://ietf-opsawg-wg.github.io/draft-ietf-opsawg-pcap/draft-ietf-opsawg-pcapng.html
 [Wireshark]: https://gitlab.com/wireshark/wireshark
 [Doctest]: https://github.com/doctest/doctest
+[protobuf]: https://github.com/protocolbuffers/protobuf
+[libprotobuf-mutator]: https://github.com/google/libprotobuf-mutator
+[llvm]: https://llvm.org/
 [libbzip2]: https://www.sourceware.org/bzip2/
 [liblzma]: https://github.com/tukaani-project/xz
 [liblz4]: https://github.com/lz4/lz4

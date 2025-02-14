@@ -1,0 +1,8 @@
+[wrap-git]
+url = https://github.com/google/libprotobuf-mutator.git
+revision = v1.4
+depth = 1
+method = cmake
+
+[provide]
+protobuf-mutator = protobuf_mutator_dep
