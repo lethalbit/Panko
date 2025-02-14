@@ -5,3 +5,5 @@ FormatStyle: 'none'
 CheckOptions:
 	readability-identifier-length.IgnoredVariableNames: 'fd'
 	readability-identifier-length.IgnoredParameterNames: 'fd'
+	readability-identifier-length.IgnoredVariableNames: '_'
+	readability-identifier-length.IgnoredParameterNames: '_'
