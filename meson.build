@@ -92,7 +92,7 @@ compiler_version = cxx.version()
 tests_enabled    = get_option('enable_tests')
 fuzzing_tests    = get_option('enable_fuzzing') and is_clang
 mtune            = get_option('mtune')
-build_cli        = get_option('cli').enabled()
+build_cli        = get_option('cli')
 
 qt               = import('qt6')
 fs               = import('fs')

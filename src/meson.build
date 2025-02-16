@@ -13,6 +13,6 @@ subdir('dissectors')
 if build_gui.allowed()
 	subdir('panko-gui')
 endif
-if build_cli
+if build_cli.allowed()
 	subdir('panko-cli')
 endif
