@@ -15,7 +15,6 @@
 
 #include "panko/internal/defs.hh"
 
-
 namespace Panko::core::types {
 	using ssize_t = std::make_signed_t<std::size_t>;
 
@@ -43,6 +42,18 @@ namespace Panko::core::types {
 	/* For std::variant matching */
 	template<typename... Ts> struct match_t : Ts... { using Ts::operator()...; };
 	template<typename... Ts> match_t(Ts...) -> match_t<Ts...>;
+
+	template<typename T>
+	struct has_nullable_ctor final {
+		template<typename U>
+		static std::true_type _ctor(decltype((U(std::nullptr_t())))*);
+		template<typename U>
+		static std::false_type _ctor(...);
+
+		static const bool value{std::is_same_v<decltype(_ctor<T>(nullptr)), std::true_type>};
+	};
+	template<typename T>
+	constexpr bool has_nullable_ctor_v{has_nullable_ctor<T>::value};
 }
 
 #endif /* PANKO_CORE_TYPES_HH */
