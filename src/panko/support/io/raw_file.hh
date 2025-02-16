@@ -30,12 +30,14 @@
 #endif
 
 #include "panko/core/types.hh"
+#include "panko/core/mmap.hh"
 #include "panko/support/io/io.hh"
 
 namespace Panko::support::io {
 	using Panko::core::types::ssize_t;
 	using Panko::core::types::mode_t;
 	using Panko::core::types::off_t;
+	using Panko::core::mmap_t;
 
 	// NOTE(aki): Eventually we might want windows support, so this should let us abstract away most of the icky windows differences.
 	namespace _compat {
@@ -154,6 +156,9 @@ namespace Panko::support::io {
 			mutable bool  _eof{false};
 			mutable off_t _len{-1};
 
+			void invalidate() noexcept {
+				_fd = -1;
+			}
 		public:
 			constexpr raw_file_t() noexcept = default;
 			constexpr raw_file_t(std::int32_t fd) noexcept : _fd{fd} { }
@@ -256,10 +261,32 @@ namespace Panko::support::io {
 				return _compat::fdup(_fd);
 			}
 
+			[[nodiscard]]
+			mmap_t map(const std::int32_t prot, const std::int32_t flags = MAP_SHARED) noexcept {
+				const auto len{length()};
+				if (len <= 0) {
+					return {};
+				}
+				return map(prot, static_cast<std::size_t>(len), flags);
+			}
+
+			[[nodiscard]]
+			mmap_t map(
+				const std::int32_t prot, const std::size_t len, const std::int32_t flags, void* map_addr = nullptr
+			) noexcept {
+				if (!valid()) {
+					return {};
+				}
+				const std::int32_t file{_fd};
+				invalidate();
+
+				return {file, len, prot, flags, map_addr};
+			}
+
 			using io_t::read;
 			using io_t::write;
 			using io_t::seek;
-		};
+	};
 }
 
 #endif /* PANKO_SUPPORT_IO_RAW_FILE_HH */
