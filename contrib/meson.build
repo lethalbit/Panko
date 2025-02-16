@@ -5,7 +5,7 @@ gen_test_data = find_program(
 	required: true
 )
 
-if build_gui
+if build_gui.allowed()
 	subdir('xdg')
 	subdir('resources')
 endif

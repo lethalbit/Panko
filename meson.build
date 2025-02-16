@@ -92,9 +92,9 @@ compiler_version = cxx.version()
 tests_enabled    = get_option('enable_tests')
 fuzzing_tests    = get_option('enable_fuzzing') and is_clang
 mtune            = get_option('mtune')
-build_gui        = get_option('gui').enabled()
 build_cli        = get_option('cli').enabled()
 
+qt               = import('qt6')
 fs               = import('fs')
 pkgconfig        = import('pkgconfig')
 py               = import('python')
@@ -122,6 +122,12 @@ py  = py.find_installation(
 	modules: []
 )
 
+qt_modules = [ 'Core', 'Gui', 'Widgets' ]
+# If we are building the GUI on Windows, we will use Qt to stub the `WinMain` garbage
+if is_windows
+	qt_modules += [ 'Main' ]
+endif
+
 # Core deps
 threads   = dependency('threads', required: true)
 spdlog    = dependency('spdlog',  required: false, version: '>=1.15.1')
@@ -134,6 +140,8 @@ zstd      = dependency('zstd',    required: false, version: '>=1.4.5', modules: 
 # Dissector Bindings
 pybind11  = dependency('pybind11', required: false, version: '>=2.13.5' )
 lua       = dependency('lua',      required: false, version: '>=5.4.6' )
+# GUI
+qt_dep    = dependency('qt6',      modules: qt_modules, required: false)
 # GUI - KDE Integration
 kf6_crash = dependency('KF6Crash',          method: 'cmake', modules: ['KF6::Crash'       ], required: false)
 kf6_core  = dependency('KF6CoreAddons',     method: 'cmake', modules: ['KF6::CoreAddons'  ], required: false)
@@ -195,25 +203,17 @@ if not doctest.found() and tests_enabled
 	doctest = dependency('doctest')
 endif
 
-# GUI - Disable KDE integration if the option is not explicitly enabaled and we can't find the deps
-kde_integration = get_option('kde_integration').require(
-	kf6_core.found() and kf6_crash.found() and kf6_win.found(),
-	error_message: 'KDE Integrataion requires KDE Framework 6'
+# GUI - Disable GUI if we don't have QT
+build_gui = get_option('gui').require(
+	qt_dep.found(),
+	error_message: 'Building the Panko GUI requires Qt6'
 )
 
-if build_gui
-	qt = import('qt6')
-
-	kde_libs = []
-	if kde_integration.enabled()
-		message('KDE Framework integration enabled')
-		kde_libs += [
-			kf6_core,
-			kf6_crash,
-			kf6_win,
-		]
-	endif
-endif
+# GUI - Disable KDE integration if the option is not explicitly enabaled and we can't find the deps
+kde_integration = get_option('kde_integration').require(
+	(kf6_core.found() and kf6_crash.found() and kf6_win.found()) and build_gui.allowed(),
+	error_message: 'KDE Integrataion requires KDE Framework 6 and building the GUI to be enabled'
+)
 
 subdir('contrib')
 subdir('src')

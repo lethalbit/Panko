@@ -19,7 +19,7 @@ option(
 option(
 	'gui',
 	type: 'feature',
-	value: 'enabled',
+	value: 'auto',
 	description: 'Build Panko GUI'
 )
 

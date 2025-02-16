@@ -1,15 +1,15 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
-qt_modules = [
-	'Core', 'Gui', 'Widgets'
-]
-
-qt_deps = [
-	dependency('qt6', modules: qt_modules, required: true),
-]
-if is_windows
-    qt_deps += dependency('qt6', modules: ['Main'], required: true)
+kde_libs = []
+if kde_integration.allowed()
+	message('KDE Framework integration enabled')
+	kde_libs += [
+		kf6_core,
+		kf6_crash,
+		kf6_win,
+	]
 endif
+
 
 panko_gui_srcs = files([
 	'main.cc',
@@ -32,7 +32,7 @@ panko_gui = executable(
 	],
 	gnu_symbol_visibility: 'inlineshidden',
 	dependencies: [
-		threads, qt_deps, kde_libs, spdlog
+		threads, qt_dep, kde_libs, spdlog
 	],
 	link_with: [
 		libpanko,

@@ -9,10 +9,10 @@ subdir('panko')
 # Dissectors
 subdir('dissectors')
 
-if build_gui
+# User-facing applications
+if build_gui.allowed()
 	subdir('panko-gui')
 endif
-
 if build_cli
 	subdir('panko-cli')
 endif
