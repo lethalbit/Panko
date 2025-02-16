@@ -90,7 +90,6 @@ is_clang         = (cxx.get_id() == 'clang')
 is_gcc           = (cxx.get_id() == 'gcc')
 compiler_version = cxx.version()
 tests_enabled    = get_option('enable_tests')
-fuzzing_tests    = get_option('enable_fuzzing') and is_clang
 mtune            = get_option('mtune')
 build_cli        = get_option('cli')
 

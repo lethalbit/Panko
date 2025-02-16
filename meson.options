@@ -38,9 +38,9 @@ option(
 )
 
 option(
-	'enable_fuzzing',
-	type: 'boolean',
-	value: true,
+	'fuzzing_tests',
+	type: 'feature',
+	value: 'auto',
 	description: 'Enable libfuzzer based tests (only supported on clang)'
 )
 

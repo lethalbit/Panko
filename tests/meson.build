@@ -6,7 +6,11 @@ test_cxx_args = [
 test_link_args = [ ]
 test_overrides = [ ]
 
-if fuzzing_tests
+fuzzing_tests = get_option('fuzzing_tests').require(
+	is_clang, error_message: 'Fuzzing requires the compiler to be clang'
+)
+
+if fuzzing_tests.allowed()
 	protobuf         = dependency('protobuf', required: false, version: '>=25.2')
 	protobuf_mutator = dependency('protobuf-mutator', required: false, version: '>=1.4')
 

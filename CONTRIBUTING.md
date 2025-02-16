@@ -48,7 +48,7 @@ To set up your fuzzing build directory, you can simply run the following from th
 $ CC=clang CXX=clang++ meson setup --buildtype debugoptimized -Db_sanitize=address,undefined build-fuzzing
 ```
 
-The `enable_fuzzing` option is set by default, and so meson will handle all the setup for you.
+The `fuzzing_tests` option is set by default, and so meson will handle all the setup for you.
 
 Some changes occur in this configuration, `b_lundef` is set to `false` as that breaks clang linking the sanitizers, and also the `b_sanitize` option is modified to include linking to the `fuzzer` sanitizer.
 

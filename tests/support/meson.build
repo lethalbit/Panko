@@ -98,7 +98,7 @@ zstd_file_test = executable(
 )
 test('zstd File I/O', xz_file_test, suite: [ 'support', 'io', 'compressed' ])
 
-if fuzzing_tests
+if fuzzing_tests.allowed()
 	sys_fuzz = executable(
 		'sys_fuzz', [
 			'sys-fuzz.cc',
