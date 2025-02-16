@@ -94,7 +94,6 @@ fuzzing_tests    = get_option('enable_fuzzing') and is_clang
 mtune            = get_option('mtune')
 build_gui        = get_option('gui').enabled()
 build_cli        = get_option('cli').enabled()
-kde_integration  = get_option('kde_integration')
 
 fs               = import('fs')
 pkgconfig        = import('pkgconfig')
@@ -124,19 +123,23 @@ py  = py.find_installation(
 )
 
 # Core deps
-threads = dependency('threads', required: true)
-spdlog  = dependency('spdlog', required: false, version: '>=1.15.1')
+threads   = dependency('threads', required: true)
+spdlog    = dependency('spdlog',  required: false, version: '>=1.15.1')
 # Compressed PCAP/PCAPNG Reading
-bzip2   = dependency('bzip2',   required: false, version: '>=1.0.8'  )
-liblzma = dependency('liblzma', required: false, version: '>=5.2.12' )
-lz4     = dependency('liblz4',  required: false, version: '>=1.9.4'  )
-zlib    = dependency('zlib',    required: false, version: '>=1.2.12' )
-zstd    = dependency('zstd',    required: false, version: '>=1.4.5', modules: ['zstd::libzstd_shared'])
+bzip2     = dependency('bzip2',   required: false, version: '>=1.0.8'  )
+liblzma   = dependency('liblzma', required: false, version: '>=5.2.12' )
+lz4       = dependency('liblz4',  required: false, version: '>=1.9.4'  )
+zlib      = dependency('zlib',    required: false, version: '>=1.2.12' )
+zstd      = dependency('zstd',    required: false, version: '>=1.4.5', modules: ['zstd::libzstd_shared'])
 # Dissector Bindings
-pybind11 = dependency('pybind11', required: false, version: '>=2.13.5' )
-lua      = dependency('lua',      required: false, version: '>=5.4.6' )
+pybind11  = dependency('pybind11', required: false, version: '>=2.13.5' )
+lua       = dependency('lua',      required: false, version: '>=5.4.6' )
+# GUI - KDE Integration
+kf6_crash = dependency('KF6Crash',          method: 'cmake', modules: ['KF6::Crash'       ], required: false)
+kf6_core  = dependency('KF6CoreAddons',     method: 'cmake', modules: ['KF6::CoreAddons'  ], required: false)
+kf6_win   = dependency('KF6WindowSystem',   method: 'cmake', modules: ['KF6::WindowSystem'], required: false)
 # Test
-doctest = dependency('doctest', required: false, version: '>=2.4.11')
+doctest   = dependency('doctest', required: false, version: '>=2.4.11')
 
 if not spdlog.found()
 	message('Did not find local spdlog install, bundling')
@@ -192,6 +195,12 @@ if not doctest.found() and tests_enabled
 	doctest = dependency('doctest')
 endif
 
+# GUI - Disable KDE integration if the option is not explicitly enabaled and we can't find the deps
+kde_integration = get_option('kde_integration').require(
+	kf6_core.found() and kf6_crash.found() and kf6_win.found(),
+	error_message: 'KDE Integrataion requires KDE Framework 6'
+)
+
 if build_gui
 	qt = import('qt6')
 
@@ -199,9 +208,9 @@ if build_gui
 	if kde_integration.enabled()
 		message('KDE Framework integration enabled')
 		kde_libs += [
-			dependency('KF6Crash',          method: 'cmake', modules: ['KF6::Crash'         ]),
-			dependency('KF6CoreAddons',     method: 'cmake', modules: ['KF6::CoreAddons'    ]),
-			dependency('KF6WindowSystem',   method: 'cmake', modules: ['KF6::WindowSystem'  ]),
+			kf6_core,
+			kf6_crash,
+			kf6_win,
 		]
 	endif
 endif

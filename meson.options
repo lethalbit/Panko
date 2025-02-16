@@ -47,7 +47,7 @@ option(
 option(
 	'kde_integration',
 	type: 'feature',
-	value: 'enabled',
+	value: 'auto',
 	description: 'Enable KDE integration using KF6 (only if gui is being built)'
 )
 
