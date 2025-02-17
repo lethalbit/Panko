@@ -17,6 +17,16 @@ option(
 )
 
 option(
+	'lua_backend',
+	type: 'combo',
+	choices: [
+		'lua', 'luajit',
+	],
+	value: 'lua',
+	description: 'The Lua runtime backend to use for Lua based packet dissectors'
+)
+
+option(
 	'gui',
 	type: 'feature',
 	value: 'auto',

@@ -92,6 +92,7 @@ compiler_version = cxx.version()
 tests_enabled    = get_option('enable_tests')
 mtune            = get_option('mtune')
 build_cli        = get_option('cli')
+lua_backend      = get_option('lua_backend')
 
 qt               = import('qt6')
 fs               = import('fs')
@@ -139,6 +140,7 @@ zstd      = dependency('zstd',    required: false, version: '>=1.4.5', modules: 
 # Dissector Bindings
 pybind11  = dependency('pybind11', required: false, version: '>=2.13.5' )
 lua       = dependency('lua',      required: false, version: '>=5.4.6' )
+luajit    = dependency('luajit',   required: false, version: '>=2.1' )
 # GUI
 qt_dep    = dependency('qt6',      modules: qt_modules, required: false)
 # GUI - KDE Integration
@@ -190,11 +192,22 @@ if not pybind11.found()
 	pybind11 = pybind11_wrap.get_variable('pybind11_dep')
 endif
 
-if not lua.found()
-	message('Did not find local lua install, bundling')
-	lua_wrap = subproject('lua', default_options: [])
-	lua = lua_wrap.get_variable('lua_dep')
+if lua_backend == 'lua'
+	if not lua.found()
+		message('Did not find local lua install, bundling')
+		lua_wrap = subproject('lua', default_options: [])
+		lua = lua_wrap.get_variable('lua_dep')
+	endif
+	lua_dep = lua
+elif lua_backend == 'luajit'
+	if not luajit.found()
+		message('Did not find local luajit install, bundling')
+		luajit_wrap = subproject('luajit', default_options: [])
+		luajit = luajit_wrap.get_variable('luajit')
+	endif
+	lua_dep = luajit
 endif
+message(f'Using lua backend: @lua_backend@')
 
 if not doctest.found() and tests_enabled
 	message('Did not find local doctest install, bundling')

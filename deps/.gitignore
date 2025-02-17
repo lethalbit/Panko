@@ -4,6 +4,7 @@
 !doctest.wrap
 !liblzma.wrap
 !lua.wrap
+!luajit.wrap
 !lz4.wrap
 !protobuf.wrap
 !protobuf-mutator.wrap
