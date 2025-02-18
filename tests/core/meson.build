@@ -35,6 +35,16 @@ types_test = executable(
 )
 test('Core Types', types_test, suite: [ 'core', 'types' ])
 
+mmap_test = executable(
+	'mmap_test', 'mmap.cc',
+	dependencies: [ doctest, ],
+	include_directories: [ root_inc ],
+	cpp_args: test_cxx_args,
+	link_args: test_link_args,
+	override_options: test_overrides,
+)
+test('Memory Mapping', mmap_test, suite: [ 'core', 'mmap' ])
+
 strutils_test = executable(
 	'strutils_test', [
 		'strutils.cc',
