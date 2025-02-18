@@ -27,6 +27,20 @@ option(
 )
 
 option(
+	'with_brotli',
+	type: 'feature',
+	value: 'auto',
+	description: 'Enable brotli decompression support for bytearray_t'
+)
+
+option(
+	'with_snappy',
+	type: 'feature',
+	value: 'auto',
+	description: 'Enable snappy decompression support for bytearray_t'
+)
+
+option(
 	'gui',
 	type: 'feature',
 	value: 'auto',

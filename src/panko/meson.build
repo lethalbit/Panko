@@ -21,7 +21,9 @@ config.set('BUGREPORT_URL', get_option('bugreport_url'))
 config.set('PYTHON_VERSION', py.language_version())
 
 config.set('SANITIZERS_ENABLED', get_option('b_sanitize') != 'none')
-config.set('KDE_INTEGRATION', kde_integration.enabled())
+config.set('KDE_INTEGRATION', kde_integration.allowed())
+config.set('WITH_BROTLI', with_brotli)
+config.set('WITH_SNAPPY', with_snappy)
 
 if git.found()
 	git_hash = run_command(git, 'rev-parse', '--short', 'HEAD', check: false).stdout().strip()
@@ -52,6 +54,16 @@ config_header = configure_file(
 	input: 'config.hh.in',
 	output: 'config.hh'
 )
+
+extra_deps = []
+
+if with_brotli
+	extra_deps += [ brotli ]
+endif
+
+if with_snappy
+	extra_deps += [ snappy ]
+endif
 
 libpanko_headers = files([
 
@@ -91,6 +103,8 @@ libpanko = library(
 	dependencies: [
 		threads, spdlog, bzip2, liblzma, lz4, zlib, zstd,
 		py.dependency(embed: true), pybind11, lua_dep,
+
+		extra_deps
 	],
 	override_options: panko_overrides,
 	link_with: [],

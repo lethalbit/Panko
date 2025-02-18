@@ -2,6 +2,8 @@
 !.gitignore
 !bzip2.wrap
 !doctest.wrap
+!google-brotli.wrap
+!google-snappy.wrap
 !liblzma.wrap
 !lua.wrap
 !luajit.wrap

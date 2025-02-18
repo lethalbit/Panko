@@ -93,6 +93,8 @@ tests_enabled    = get_option('enable_tests')
 mtune            = get_option('mtune')
 build_cli        = get_option('cli')
 lua_backend      = get_option('lua_backend')
+with_brotli      = get_option('with_brotli').allowed()
+with_snappy      = get_option('with_snappy').allowed()
 
 qt               = import('qt6')
 fs               = import('fs')
@@ -141,6 +143,9 @@ zstd      = dependency('zstd',    required: false, version: '>=1.4.5', modules: 
 pybind11  = dependency('pybind11', required: false, version: '>=2.13.5' )
 lua       = dependency('lua',      required: false, version: '>=5.4.6' )
 luajit    = dependency('luajit',   required: false, version: '>=2.1' )
+# Optional/Feature deps for core
+brotli    = dependency('libbrotlidec',  required: false, version: '>=1.1.0')
+snappy    = dependency('snappy',        required: false, version: '>=1.1.0')
 # GUI
 qt_dep    = dependency('qt6',      modules: qt_modules, required: false)
 # GUI - KDE Integration
@@ -213,6 +218,18 @@ if not doctest.found() and tests_enabled
 	message('Did not find local doctest install, bundling')
 	doctest_wrap = subproject('doctest', default_options: [])
 	doctest = dependency('doctest')
+endif
+
+if with_brotli and not brotli.found()
+	message('Did not find local brotli install and brotli was requested, bundling')
+	brotli_wrap = subproject('google-brotli', default_options: [])
+	brotli = dependency('libbrotlidec')
+endif
+
+if with_snappy and not snappy.found()
+	message('Did not find local brotli install and brotli was requested, bundling')
+	snappy_wrap = subproject('google-snappy', default_options: [])
+	snappy = snappy_wrap.get_variable('snappy_dep')
 endif
 
 # GUI - Disable GUI if we don't have QT
