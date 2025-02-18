@@ -1,5 +1,20 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
+bytearray_test = executable(
+	'bytearray_test', [
+		'bytearray.cc',
+		'@0@/src/panko/core/bytearray.cc'.format(meson.project_source_root()),
+		'@0@/src/panko/core/errcodes.cc'.format(meson.project_source_root()),
+		'@0@/src/panko/core/strutils.cc'.format(meson.project_source_root()),
+	],
+	dependencies: [ doctest, spdlog, ],
+	include_directories: [ root_inc ],
+	cpp_args: test_cxx_args,
+	link_args: test_link_args,
+	override_options: test_overrides,
+)
+test('Byte Array', bytearray_test, suite: [ 'core', 'bytearray' ])
+
 integers_test = executable(
 	'integers_test', 'integers.cc',
 	dependencies: [ doctest, ],

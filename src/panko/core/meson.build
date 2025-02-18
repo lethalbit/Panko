@@ -1,12 +1,14 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
 libpanko_srcs += files([
+	'bytearray.cc',
 	'errcodes.cc',
 	'paths.cc',
 	'strutils.cc',
 ])
 
 libpanko_core_headers = files([
+	'bytearray.hh',
 	'errcodes.hh',
 	'integers.hh',
 	'mmap.hh',
