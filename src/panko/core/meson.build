@@ -7,6 +7,7 @@ libpanko_srcs += files([
 
 libpanko_core_headers = files([
 	'errcodes.hh',
+	'mmap.hh',
 	'paths.hh',
 	'types.hh',
 	'units.hh',
