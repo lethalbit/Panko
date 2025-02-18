@@ -1,4 +1,5 @@
 # SPDX-License-Identifier: BSD-3-Clause
+
 project(
 	'Panko',
 	'cpp',
@@ -89,6 +90,7 @@ is_linux         = (target_machine.system() == 'linux')
 is_clang         = (cxx.get_id() == 'clang')
 is_gcc           = (cxx.get_id() == 'gcc')
 compiler_version = cxx.version()
+
 tests_enabled    = get_option('enable_tests')
 mtune            = get_option('mtune')
 build_cli        = get_option('cli')
