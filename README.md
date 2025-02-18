@@ -4,6 +4,14 @@ Panko is a dedicated packet dissection and analysis tool with a modern and sane 
 
 It's primary input are compressed or raw [PCAP] and [PCAPNG] files, it then runs dissectors and analysis plugins on the packet stream, and the data can be inspected or exported.
 
+> [!IMPORTANT]
+> Panko doesn't do ***ANY*** capturing, nor does it have the ability to do so, and implementing the
+> needed machinery for it is unplanned. It's mainly geared for ingesting captures from external
+> software or Wireshark itself.
+>
+> There might be the possibility for an [extcap]-like interface in the future to allow for live
+> dissection of an active capture, but once again, Panko won't be doing the capture itself.
+
 ## Panko vs Wireshark
 
 Panko was developed in response to the absolute pain using the [Wireshark] C API is, as well as the discarding of potentially vital capture information from the capture files, such as which interface a packet the dissector is looking at came in on, and also any ancillary metadata attached to the packet capture files.
