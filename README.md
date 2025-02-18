@@ -65,7 +65,7 @@ The [protobuf], [libprotobuf-mutator], and [llvm] dependencies are only needed i
 
 ### Configuring
 
-You can build Panko with the default options, all of which can be found in [`meson_options.txt`]. You can change these by specifying `-D<OPTION_NAME>=<VALUE>` at initial meson invocation time, or with `meson configure` in the build directory post initial configure.
+You can build Panko with the default options, all of which can be found in [`meson.options`]. You can change these by specifying `-D<OPTION_NAME>=<VALUE>` at initial meson invocation time, or with `meson configure` in the build directory post initial configure.
 
 To change the install prefix, which is `/usr/local` by default ensure to pass `--prefix <PREFIX>` when running meson for the first time.
 
@@ -112,7 +112,7 @@ The documentation is licensed under the Creative Commons [CC-BY-SA 4.0] and can 
 [spdlog]: https://github.com/gabime/spdlog
 [Qt6]: https://www.qt.io/product/qt6
 [KF6]: https://develop.kde.org/products/frameworks/
-[`meson_options.txt`]: ./meson_options.txt
+[`meson.options`]: ./meson.options
 [BSD-3-Clause]: https://spdx.org/licenses/BSD-3-Clause.htm
 [`LICENSE`]: ./LICENSE.md
 [CC-BY-SA 4.0]: https://creativecommons.org/licenses/by-sa/4.0/
