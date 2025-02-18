@@ -8,10 +8,10 @@
 #include <cstdint>
 #include <string_view>
 
-#mesondefine SANITIZERS_ENABLED
-#mesondefine KDE_INTEGRATION
-#mesondefine WITH_BROTLI
-#mesondefine WITH_SNAPPY
+#mesondefine PANKO_SANITIZERS_ENABLED
+#mesondefine PANKO_KDE_INTEGRATION
+#mesondefine PANKO_WITH_BROTLI
+#mesondefine PANKO_WITH_SNAPPY
 
 using namespace std::literals::string_view_literals;
 

@@ -25,7 +25,7 @@ PANKO_DIAGNOSTICS_IGNORE("-Wsign-conversion")
 
 #define NDEBUG
 PANKO_DIAGNOSTICS_IGNORE("-Wredundant-decls")
-#if defined(KDE_INTEGRATION)
+#if defined(PANKO_KDE_INTEGRATION)
 #	if defined(NDEBUG)
 #		include <KCrash>
 # 	endif
@@ -62,7 +62,7 @@ int main(int argc, char** argv) noexcept {
 	QApplication::setApplicationVersion(QString::fromStdString(panko_version));
 
 	/* Hook up the KDE integration */
-	#if defined(KDE_INTEGRATION)
+	#if defined(PANKO_KDE_INTEGRATION)
 	const KAboutData kabout{
 		"Panko", "Panko",
 		QString::fromStdString(panko_version),
