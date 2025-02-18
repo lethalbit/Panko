@@ -8,6 +8,7 @@
 #include <print>
 
 #include <spdlog/spdlog.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
 
 #include "panko/internal/defs.hh"
 #include "panko/internal/frontend.hh"
@@ -32,6 +33,9 @@ void print_help() noexcept;
 void print_version() noexcept;
 
 int main(int argc, char** argv) noexcept {
+	/* Set up the logger */
+	auto logger{spdlog::stdout_color_mt("panko")};
+
 	print_banner();
 }
 
