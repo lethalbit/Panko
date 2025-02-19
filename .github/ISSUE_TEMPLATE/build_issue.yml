@@ -32,7 +32,7 @@ body:
       required: true
 
   - type: input
-    id: os-version
+    id: compiler-version
     attributes:
       label: OS Version
       description: "The OS release the build issue occurred on"
