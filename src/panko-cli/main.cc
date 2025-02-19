@@ -33,6 +33,9 @@ int main(int argc, char** argv) noexcept {
 	/* Set up the logger */
 	auto logger{spdlog::stdout_color_mt("panko")};
 
+	spdlog::get("panko")->debug("Creating configuration and data directories if needed"sv);
+	Panko::support::paths::initialize_dirs();
+
 	print_banner();
 }
 

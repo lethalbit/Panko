@@ -91,6 +91,9 @@ int main(int argc, char** argv) noexcept {
 		QCoreApplication::installTranslator(&panko_localizer);
 	}
 
+	spdlog::get("panko")->debug("Creating configuration and data directories if needed"sv);
+	Panko::support::paths::initialize_dirs();
+
 	print_banner();
 
 	/* Start application */
