@@ -95,6 +95,14 @@
 </p>
 
 <p>
+	<h3>tomlplusplus</h3>
+	<ul>
+		<li>License: <a href="https://spdx.org/licenses/MIT.html">MIT</a></li>
+		<li>URL: <a href="https://github.com/marzer/tomlplusplus">https://github.com/marzer/tomlplusplus</a></li>
+	</ul>
+</p>
+
+<p>
 	<h3>zlib</h3>
 	<ul>
 		<li>License: <a href="https://spdx.org/licenses/Zlib.html">Zlib</a></li>

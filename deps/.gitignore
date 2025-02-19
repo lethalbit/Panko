@@ -12,5 +12,6 @@
 !protobuf-mutator.wrap
 !pybind11.wrap
 !spdlog.wrap
+!tomlplusplus.wrap
 !zlib.wrap
 !zstd.wrap

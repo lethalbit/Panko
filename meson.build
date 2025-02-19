@@ -154,6 +154,8 @@ qt_dep    = dependency('qt6',      modules: qt_modules, required: false)
 kf6_crash = dependency('KF6Crash',          method: 'cmake', modules: ['KF6::Crash'       ], required: false)
 kf6_core  = dependency('KF6CoreAddons',     method: 'cmake', modules: ['KF6::CoreAddons'  ], required: false)
 kf6_win   = dependency('KF6WindowSystem',   method: 'cmake', modules: ['KF6::WindowSystem'], required: false)
+# GUI/CLI
+tomlpp    = dependency('tomlplusplus', required: false, version: '>=3.4.0')
 # Test
 doctest   = dependency('doctest', required: false, version: '>=2.4.11')
 
@@ -215,6 +217,12 @@ elif lua_backend == 'luajit'
 	lua_dep = luajit
 endif
 message(f'Using lua backend: @lua_backend@')
+
+if not tomlpp.found()
+	message('Did not find local tomlplusplus install, bundling')
+	tomlpp_wrap = subproject('tomlplusplus', default_options: [])
+	tomlpp = dependency('tomlplusplus')
+endif
 
 if not doctest.found() and tests_enabled
 	message('Did not find local doctest install, bundling')
