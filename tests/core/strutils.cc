@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* strutils.cc - memory mapped file test harness */
+/* strutils.cc - String utilities test harness */
 
 #include <cstring>
 #include <cstdint>
