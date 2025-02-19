@@ -105,7 +105,7 @@ int main(int argc, char** argv) noexcept {
 
 void print_banner() noexcept {
 	print_version();
-	std::print("\nPanko and the Panko GUI are licensed under the BSD-3-Clause <https://spdx.org/licenses/BSD-3-Clause.htm>\n");
+	std::println("\nPanko and the Panko GUI are licensed under the BSD-3-Clause <https://spdx.org/licenses/BSD-3-Clause.htm>");
 }
 
 void print_help() noexcept {
@@ -114,7 +114,7 @@ void print_help() noexcept {
 }
 
 void print_version() noexcept {
-	std::print("Panko v{}\n", panko_version);
-	std::print("  Python Version: {}\n", cfg::python_version);
-	std::print("  Lua Version: {} {}\n", cfg::lua_backend, cfg::lua_version);
+	std::println("Panko v{}", panko_version);
+	std::println("  Python Version: {}", cfg::python_version);
+	std::println("  Lua Version: {} {}", cfg::lua_backend, cfg::lua_version);
 }
