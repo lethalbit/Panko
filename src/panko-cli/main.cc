@@ -19,9 +19,6 @@
 namespace fs  = std::filesystem;
 namespace cfg = Panko::config;
 
-using Panko::internal::python_version;
-using Panko::internal::lua_version;
-
 const auto panko_version{std::format(
 	"{} ({} {} {}-{})"sv,
 	cfg::version_full, cfg::compiler_name, cfg::compiler_version, cfg::target_system, cfg::target_arch
@@ -52,6 +49,6 @@ void print_help() noexcept {
 
 void print_version() noexcept {
 	std::print("Panko v{}\n", panko_version);
-	std::print("  Python Version: {}\n", python_version());
-	std::print("  Lua Version: {}\n", lua_version());
+	std::print("  Python Version: {}\n", cfg::python_version);
+	std::print("  Lua Version: {} {}\n", cfg::lua_backend, cfg::lua_version);
 }
