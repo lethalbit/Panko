@@ -15,7 +15,7 @@
 
 // FIXME(aki): Currently these assume absolute paths, especially for
 // the data dir path, this would likely break on non system-installed
-// instances of NekoVLSI such as a "portable" binary package.
+// instances of Panko such as a "portable" binary package.
 // It /might/ be fine, but needs proper testing and validation
 
 // HACK(aki): The `cert-err58-cpp` lint is disabled because we can't really
