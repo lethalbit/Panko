@@ -66,6 +66,7 @@ namespace Panko::support::paths {
 	const static auto CONFIG_HOME{HOME / ".config"sv};
 	#endif
 
+	/* Panko specific directories */
 	[[maybe_unused]]
 	const static auto CONFIG_DIR{CONFIG_HOME / "panko"sv};
 	[[maybe_unused]]
@@ -96,6 +97,10 @@ namespace Panko::support::paths {
 	const static auto PY_DISSECTORS_LOCAL{DISSECTORS_LOCAL / "python"sv};
 	[[maybe_unused]]
 	const static auto LUA_DISSECTORS_LOCAL{DISSECTORS_LOCAL / "lua"sv};
+
+	/* Panko file paths */
+	[[maybe_unused]]
+	const static auto PANKO_CONFIG_FILE{CONFIG_DIR / "config.toml"sv};
 
 	PANKO_API void initialize_dirs() noexcept;
 }
