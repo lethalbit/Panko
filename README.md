@@ -40,14 +40,19 @@ To build Panko, ensure you have the following build time dependencies:
 
 In addition, the following dependencies are needed to build but have built-in build support if not present on the build system:
 
+* [brotli] (only if `with_brotli` is specified)
 * [libbzip2]
-* [liblzma]
 * [liblz4]
+* [liblzma]
+* [lua] or [luajit]
+* [pybind11]
+* [snappy] (only if `with_snappy` is specified)
+* [spdlog]
+* [tomlplusplus]
 * [zlib]
 * [zstd]
-* [pybind11]
-* [lua]
-* [spdlog]
+
+[brotli] and or [snappy] are only needed if the respective `with_` options are enabled, they are used as part of the dissector API to allow decompression of [brotli] and [snappy] compressed buffers respectively.
 
 To build the GUI, you need the following in addition to the above:
 
@@ -97,21 +102,26 @@ The documentation is licensed under the Creative Commons [CC-BY-SA 4.0] and can 
 
 [PCAP]: https://ietf-opsawg-wg.github.io/draft-ietf-opsawg-pcap/draft-ietf-opsawg-pcap.html
 [PCAPNG]: https://ietf-opsawg-wg.github.io/draft-ietf-opsawg-pcap/draft-ietf-opsawg-pcapng.html
+[extcap]: https://www.wireshark.org/docs/wsdg_html_chunked/ChCaptureExtcap.html
 [Wireshark]: https://gitlab.com/wireshark/wireshark
+[brotli]: https://github.com/google/brotli
+[libbzip2]: https://www.sourceware.org/bzip2/
+[liblz4]: https://github.com/lz4/lz4
+[liblzma]: https://github.com/tukaani-project/xz
+[lua]: https://www.lua.org/
+[luajit]: https://luajit.org/
+[pybind11]: https://github.com/pybind/pybind11
+[snappy]: https://github.com/google/snappy
+[spdlog]: https://github.com/gabime/spdlog
+[tomlplusplus]: https://github.com/marzer/tomlplusplus
+[zlib]: https://www.zlib.net/
+[zstd]: https://github.com/facebook/zstd
+[Qt6]: https://www.qt.io/product/qt6
+[KF6]: https://develop.kde.org/products/frameworks/
 [Doctest]: https://github.com/doctest/doctest
 [protobuf]: https://github.com/protocolbuffers/protobuf
 [libprotobuf-mutator]: https://github.com/google/libprotobuf-mutator
 [llvm]: https://llvm.org/
-[libbzip2]: https://www.sourceware.org/bzip2/
-[liblzma]: https://github.com/tukaani-project/xz
-[liblz4]: https://github.com/lz4/lz4
-[zlib]: https://www.zlib.net/
-[zstd]: https://github.com/facebook/zstd
-[pybind11]: https://github.com/pybind/pybind11
-[lua]: https://www.lua.org/
-[spdlog]: https://github.com/gabime/spdlog
-[Qt6]: https://www.qt.io/product/qt6
-[KF6]: https://develop.kde.org/products/frameworks/
 [`meson.options`]: ./meson.options
 [BSD-3-Clause]: https://spdx.org/licenses/BSD-3-Clause.htm
 [`LICENSE`]: ./LICENSE.md
