@@ -5,11 +5,13 @@ subdir('io')
 libpanko_support_headers = files([
 	'file.hh',
 	'leb128.hh',
+	'so_loader.hh',
 	'sys.hh',
 ])
 
 libpanko_srcs += files([
 	'file.cc',
+	'so_loader.cc',
 	'sys.cc',
 ])
 
