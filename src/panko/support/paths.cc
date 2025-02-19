@@ -25,6 +25,9 @@ namespace Panko::support::paths {
 		CACHE_DIR,
 		DATA_DIR_LOCAL,
 		DISSECTORS_LOCAL,
+		SO_DISSECTORS_LOCAL,
+		PY_DISSECTORS_LOCAL,
+		LUA_DISSECTORS_LOCAL,
 	})};
 
 	void initialize_dirs() noexcept {

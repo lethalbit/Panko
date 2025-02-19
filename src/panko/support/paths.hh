@@ -75,11 +75,27 @@ namespace Panko::support::paths {
 	[[maybe_unused]]
 	const static auto DATA_DIR_LOCAL{DATA_HOME / "panko"sv};
 
-	/* Dissector Paths */
+	/* Dissector Root Paths */
 	[[maybe_unused]]
 	const static auto DISSECTORS_SYS{DATA_DIR_SYS / "dissectors"sv};
 	[[maybe_unused]]
 	const static auto DISSECTORS_LOCAL{DATA_DIR_LOCAL / "dissectors"sv};
+
+	/* System Dissectors */
+	[[maybe_unused]]
+	const static auto SO_DISSECTORS_SYS{DISSECTORS_SYS / "native"sv};
+	[[maybe_unused]]
+	const static auto PY_DISSECTORS_SYS{DISSECTORS_SYS / "python"sv};
+	[[maybe_unused]]
+	const static auto LUA_DISSECTORS_SYS{DISSECTORS_SYS / "lua"sv};
+
+	/* Local/User Dissectors */
+	[[maybe_unused]]
+	const static auto SO_DISSECTORS_LOCAL{DISSECTORS_LOCAL / "native"sv};
+	[[maybe_unused]]
+	const static auto PY_DISSECTORS_LOCAL{DISSECTORS_LOCAL / "python"sv};
+	[[maybe_unused]]
+	const static auto LUA_DISSECTORS_LOCAL{DISSECTORS_LOCAL / "lua"sv};
 
 	PANKO_API void initialize_dirs() noexcept;
 }
