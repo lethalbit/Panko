@@ -1,0 +1,111 @@
+<p>
+	<h3>bzip2</h3>
+	<ul>
+		<li>License: <a href="https://sourceware.org/bzip2/manual/manual.html">Modified zlib</a></li>
+		<li>URL: <a href="https://sourceware.org/bzip2/">https://sourceware.org/bzip2/</a></li>
+	</ul>
+</p>
+
+<p>
+	<h3>brotli</h3>
+	<ul>
+		<li>License: <a href="https://spdx.org/licenses/MIT.html">MIT</a></li>
+		<li>URL: <a href="https://github.com/google/brotli">https://github.com/google/brotli</a></li>
+	</ul>
+</p>
+
+<p>
+	<h3>KDE Frameworks</h3>
+	<ul>
+		<li>License: <a href="https://spdx.org/licenses/LGPL-3.0-only.html">LGPL-3.0-only</a><</li>
+		<li>URL: <a href="https://develop.kde.org/products/frameworks">https://develop.kde.org/products/frameworks</a></li>
+	</ul>
+</p>
+
+<p>
+	<h3>liblzma</h3>
+	<ul>
+		<li>License: Public Domain</li>
+		<li>URL: <a href="https://tukaani.org/xz/liblzma-api/index.html">https://tukaani.org/xz/liblzma-api/index.html</a></li>
+	</ul>
+</p>
+
+<p>
+	<h3>lua</h3>
+	<ul>
+		<li>License: <a href="https://spdx.org/licenses/MIT.html">MIT</a></li>
+		<li>URL: <a href="https://www.lua.org/">https://www.lua.org/</a></li>
+	</ul>
+</p>
+
+<p>
+	<h3>luajit</h3>
+	<ul>
+		<li>License: <a href="https://spdx.org/licenses/MIT.html">MIT</a></li>
+		<li>URL: <a href="https://luajit.org/">https://luajit.org/</a></li>
+	</ul>
+</p>
+
+<p>
+	<h3>lz4</h3>
+	<ul>
+		<li>License: <a href="https://spdx.org/licenses/BSD-2-Clause.html">BSD-2-Clause</a></li>
+		<li>URL: <a href="https://github.com/lz4/lz4">https://github.com/lz4/lz4</a></li>
+	</ul>
+</p>
+
+<p>
+	<h3>Python</h3>
+	<ul>
+		<li>License: <a href="https://spdx.org/licenses/PSF-2.0.html">PSF-2.0</a></li>
+		<li>URL: <a href="https://www.python.org/">https://www.python.org/</a></li>
+	</ul>
+</p>
+
+<p>
+	<h3>pybind11</h3>
+	<ul>
+		<li>License: <a href="https://github.com/pybind/pybind11/blob/master/LICENSE">BSD-Like</a></li>
+		<li>URL: <a href="https://github.com/pybind/pybind11">https://github.com/pybind/pybind11</a></li>
+	</ul>
+</p>
+
+<p>
+	<h3>Qt Framework</h3>
+	<ul>
+		<li>License: <a href="https://spdx.org/licenses/LGPL-3.0-only.html">LGPL-3.0-only</a</li>
+		<li>URL: <a href="https://www.qt.io/product/framework">https://www.qt.io/product/framework</a></li>
+	</ul>
+</p>
+
+<p>
+	<h3>snappy</h3>
+	<ul>
+		<li>License: <a href="https://spdx.org/licenses/BSD-3-Clause.html">BSD-3-Clause</a></li>
+		<li>URL: <a href="https://github.com/google/snappy">https://github.com/google/snappy</a></li>
+	</ul>
+</p>
+
+<p>
+	<h3>spdlog</h3>
+	<ul>
+		<li>License: <a href="https://spdx.org/licenses/MIT.html">MIT</a></li>
+		<li>URL: <a href="https://github.com/gabime/spdlog">https://github.com/gabime/spdlog</a></li>
+	</ul>
+</p>
+
+<p>
+	<h3>zlib</h3>
+	<ul>
+		<li>License: <a href="https://github.com/facebook/zstd">https://github.com/facebook/zstd</a></li>
+		<li>URL: <a href="https://www.zlib.net/">https://www.zlib.net/</a></li>
+	</ul>
+</p>
+
+<p>
+	<h3>zstd</h3>
+	<ul>
+		<li>License: <a href="https://spdx.org/licenses/BSD-3-Clause.html">BSD-3-Clause</a></li>
+		<li>URL: <a href="https://github.com/facebook/zstd">https://github.com/facebook/zstd</a></li>
+	</ul>
+</p>

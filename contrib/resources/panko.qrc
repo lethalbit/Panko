@@ -4,4 +4,15 @@
 		<file>./img/trans-flag.svg</file>
 		<file>./img/lesbian-flag.svg</file>
 	</qresource>
+
+	<qresource prefix="/txt">
+		<file alias="license">../../LICENSE</file>
+		<file alias="about">./txt/en_US/about.txt</file>
+		<file alias="contributors">./txt/contributors.txt</file>
+		<file alias="components">./txt/components.txt</file>
+	</qresource>
+	<qresource lang="en" prefix="/txt">
+		<file alias="license">../../LICENSE</file>
+		<file alias="about">./txt/en_US/about.txt</file>
+	</qresource>
 </RCC>

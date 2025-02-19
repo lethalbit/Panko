@@ -1,0 +1,18 @@
+<h1>Panko</h1>
+<p>
+	Panko is a dedicated packet dissection and analysis tool with a modern and sane API for dissectors and plugins.
+</p>
+<p>
+	Panko is primarily designed to ingest compressed or raw pcap or pcapng files produced from other tools.
+</p>
+
+<h2>Links</h2>
+<p>
+	<ul>
+		<li>Source Code: <a href="https://github.com/lethalbit/Panko">https://github.com/lethalbit/Panko</a></li>
+		<li>Bug Tracker: <a href="https://github.com/lethalbit/Panko/issues">https://github.com/lethalbit/Panko/issues</a></li>
+		<li>Documentation: <a href="https://lethalbit.github.io/Panko">https://lethalbit.github.io/Panko</a></li>
+		<li>Support Development: <a href="https://github.com/sponsors/lethalbit">https://github.com/sponsors/lethalbit</a></li>
+		<li>IRC Channel: <a href="ircs://irc.libera.chat:6697/#panko">ircs://irc.libera.chat:6697/#panko</li>
+	<ul>
+</p>
