@@ -12,6 +12,7 @@
 #mesondefine PANKO_KDE_INTEGRATION
 #mesondefine PANKO_WITH_BROTLI
 #mesondefine PANKO_WITH_SNAPPY
+#mesondefine PANKO_USING_LUAJIT
 
 using namespace std::literals::string_view_literals;
 
@@ -51,6 +52,10 @@ namespace Panko::config {
 	constexpr static auto bugreport_url{"@BUGREPORT_URL@"sv};
 	[[maybe_unused]]
 	constexpr static auto python_version{"@PYTHON_VERSION@"sv};
+	[[maybe_unused]]
+	constexpr static auto lua_version{"@LUA_VERSION@"sv};
+	[[maybe_unused]]
+	constexpr static auto lua_backend{"@LUA_BACKEND@"sv};
 }
 
 #endif /* PANKO_CONFIG_HH */

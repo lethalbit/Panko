@@ -19,11 +19,14 @@ config.set('DATA_DIR', panko_data_dir)
 ## Misc
 config.set('BUGREPORT_URL', get_option('bugreport_url'))
 config.set('PYTHON_VERSION', py.language_version())
+config.set('LUA_VERSION', lua_dep.version())
+config.set('LUA_BACKEND', lua_backend)
 
 config.set('PANKO_SANITIZERS_ENABLED', get_option('b_sanitize') != 'none')
 config.set('PANKO_KDE_INTEGRATION', kde_integration.allowed())
 config.set('PANKO_WITH_BROTLI', with_brotli)
 config.set('PANKO_WITH_SNAPPY', with_snappy)
+config.set('PANKO_USING_LUAJIT', lua_backend == 'luajit')
 
 if git.found()
 	git_hash = run_command(git, 'rev-parse', '--short', 'HEAD', check: false).stdout().strip()
