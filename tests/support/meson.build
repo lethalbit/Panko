@@ -28,6 +28,16 @@ sys_test = executable(
 )
 test('System Support', sys_test, suite: [ 'support', 'sys' ])
 
+leb128_test = executable(
+	'leb128_test', 'leb128.cc',
+	dependencies: [ doctest, ],
+	include_directories: [ root_inc ],
+	cpp_args: test_cxx_args,
+	link_args: test_link_args,
+	override_options: test_overrides,
+)
+test('LEB128 Encoding / Decoding', leb128_test, suite: [ 'support', 'leb128' ])
+
 if fuzzing_tests.allowed()
 	file_fuzz = executable(
 		'file_fuzz', [

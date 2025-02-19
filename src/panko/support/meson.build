@@ -4,6 +4,7 @@ subdir('io')
 
 libpanko_support_headers = files([
 	'file.hh',
+	'leb128.hh',
 	'sys.hh',
 ])
 
