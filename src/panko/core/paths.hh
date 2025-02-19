@@ -24,35 +24,56 @@
 namespace Panko::core::paths {
 	using namespace std::literals::string_view_literals;
 
-	namespace cfg = Panko::config;
 	namespace fs  = std::filesystem;
+	namespace cfg = Panko::config;
+	namespace sys = Panko::support::sys;
 
+	[[maybe_unused]]
+	const static auto HOME{sys::get_home()};
+
+	#if defined(_WIN32)
+	const static auto _WIN_DATA_DIR{std::getenv("APPDATA"sv) / "lethalbit"sv / "panko"sv};
+	const static auto _WIN_LOCAL_DATA_DIR{sys::getenv("LOCALAPPDATA"sv) / "lethalbit"sv / "panko"sv};
+	[[maybe_unused]]
+	const static auto CACHE_HOME{_WIN_LOCAL_DATA_DIR / "cache"sv};
+	[[maybe_unused]]
+	const static auto DATA_HOME{_WIN_DATA_DIR / "share"sv};
+	[[maybe_unused]]
+	const static auto BIN_HOME{_WIN_DATA_DIR / "bin"sv};
+	[[maybe_unused]]
+	const static auto LIB_HOME{_WIN_DATA_DIR / "lib"sv};
+	[[maybe_unused]]
+	const static auto CONFIG_HOME{_WIN_DATA_DIR / "config"sv};
+	#elif defined(__APPLE__)
+	[[maybe_unused]]
+	const static auto CACHE_HOME{HOME / "Library/Caches"sv};
+	[[maybe_unused]]
+	const static auto DATA_HOME{HOME / "Library/Application Support"sv};
+	/* NOTE(aki): macOS doesn't have an equiv to `~/.local/bin` or `~/.local/lib` */
+	[[maybe_unused]]
+	const static auto CONFIG_HOME{HOME / "Library/Preferences"sv};
+	#else
 	/* XDG Directories */
-	namespace xdg {
-		[[maybe_unused]]
-		const static auto HOME{Panko::support::sys::get_home()};
-		[[maybe_unused]]
-		const static auto CACHE_HOME{HOME / ".cache"sv};
-		[[maybe_unused]]
-		const static auto DATA_HOME{HOME / ".local/share"sv};
-		[[maybe_unused]]
-		const static auto BIN_HOME{HOME / ".local/bin"sv};
-		[[maybe_unused]]
-		const static auto LIB_HOME{HOME / ".local/lib"sv};
-		[[maybe_unused]]
-		const static auto CONFIG_HOME{HOME / ".config"sv};
-	}
+	[[maybe_unused]]
+	const static auto CACHE_HOME{HOME / ".cache"sv};
+	[[maybe_unused]]
+	const static auto DATA_HOME{HOME / ".local/share"sv};
+	[[maybe_unused]]
+	const static auto BIN_HOME{HOME / ".local/bin"sv};
+	[[maybe_unused]]
+	const static auto LIB_HOME{HOME / ".local/lib"sv};
+	[[maybe_unused]]
+	const static auto CONFIG_HOME{HOME / ".config"sv};
+	#endif
 
-	/* TODO(aki): We should probably do cross-platform specialization rather than cramming XDG into Win32/macOS */
-	/* Panko Specific Directories */
 	[[maybe_unused]]
-	const static auto CONFIG_DIR{xdg::CONFIG_HOME / "panko"sv};
+	const static auto CONFIG_DIR{CONFIG_HOME / "panko"sv};
 	[[maybe_unused]]
-	const static auto CACHE_DIR{xdg::CACHE_HOME / "panko"sv};
+	const static auto CACHE_DIR{CACHE_HOME / "panko"sv};
 	[[maybe_unused]]
 	const static auto DATA_DIR_SYS{fs::path(cfg::data_dir)};
 	[[maybe_unused]]
-	const static auto DATA_DIR_LOCAL{xdg::DATA_HOME / "panko"sv};
+	const static auto DATA_DIR_LOCAL{DATA_HOME / "panko"sv};
 
 	/* Dissector Paths */
 	[[maybe_unused]]

@@ -6,15 +6,26 @@
 
 #include "panko/core/paths.hh"
 
+#include "panko/core/types.hh"
 namespace Panko::core::paths {
+	using Panko::core::types::make_array;
 	namespace fs = std::filesystem;
 
-	const static std::array<fs::path, 4> user_paths{{
+	const static auto user_paths{make_array({
+		/* If we are on windows we need to do some extra work */
+		#if defined(_WIN32)
+		CACHE_HOME,
+		DATA_HOME,
+		BIN_HOME,
+		LIB_HOME,
+		CONFIG_HOME,
+		#endif
+
 		CONFIG_DIR,
 		CACHE_DIR,
 		DATA_DIR_LOCAL,
 		DISSECTORS_LOCAL,
-	}};
+	})};
 
 	void initialize_dirs() noexcept {
 		for(const auto& dir : user_paths) {
