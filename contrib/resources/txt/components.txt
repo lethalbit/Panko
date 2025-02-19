@@ -1,7 +1,7 @@
 <p>
 	<h3>bzip2</h3>
 	<ul>
-		<li>License: <a href="https://sourceware.org/bzip2/manual/manual.html">Modified zlib</a></li>
+		<li>License: <a href="https://sourceware.org/bzip2/manual/manual.html">Modified Zlib</a></li>
 		<li>URL: <a href="https://sourceware.org/bzip2/">https://sourceware.org/bzip2/</a></li>
 	</ul>
 </p>
@@ -97,7 +97,7 @@
 <p>
 	<h3>zlib</h3>
 	<ul>
-		<li>License: <a href="https://github.com/facebook/zstd">https://github.com/facebook/zstd</a></li>
+		<li>License: <a href="https://spdx.org/licenses/Zlib.html">Zlib</a></li>
 		<li>URL: <a href="https://www.zlib.net/">https://www.zlib.net/</a></li>
 	</ul>
 </p>
