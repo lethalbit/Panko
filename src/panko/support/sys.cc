@@ -14,12 +14,8 @@ namespace Panko::support::sys {
 
 	[[nodiscard]]
 	std::optional<std::string> getenv(const std::string_view& name) {
-		/* Not ideal, but needed to ensure we don't have getenv run off into the sunset */
-		if (name.back() != '\0') {
-			return std::nullopt;
-		}
-		// NOLINTNEXTLINE(bugprone-suspicious-stringview-data-usage, concurrency-mt-unsafe)
-		const auto* const env{std::getenv(name.data())};
+		// NOLINTNEXTLINE(oncurrency-mt-unsafe)
+		const auto* const env{std::getenv(std::string(name).c_str())};
 		if (env != nullptr) {
 			return std::make_optional(std::string(env));
 		}
