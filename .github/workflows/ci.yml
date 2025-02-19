@@ -1,0 +1,174 @@
+name: 'Panko CI'
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - '*'
+  pull_request:
+  workflow_dispatch:
+
+env:
+  TOOL_PYTHON_VERSION: '3.11'
+
+permissions:
+  contents: read
+
+jobs:
+  build-panko-linux:
+    runs-on: ['${{ matrix.platform.runner }}', '${{ matrix.platform.arch }}']
+    strategy:
+      matrix:
+        platform:
+          - runner: ubuntu-latest
+            arch: x86_64
+          - runner: ubuntu-latest
+            arch: arm64
+        compiler:
+          - 'gcc-14'
+      fail-fast: false
+    name: 'Panko CI - Build (${{matrix.platform.runner}}, ${{matrix.platform.arch}})'
+    steps:
+      - name: 'Initialize Environment'
+        shell: bash
+        env:
+          WORKSPACE: ${{ github.workspace }}
+        run: |
+          echo "$HOME/.local/bin:$PATH" >> $GITHUB_PATH
+          echo "GITHUB_WORKSPACE=\"`pwd`\"" >> $GITHUB_ENV
+
+      - name: 'Setup Python (${{ env.TOOL_PYTHON_VERSION }})'
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.TOOL_PYTHON_VERSION }}
+
+      - name: 'Setup GCC'
+        if: startsWith(matrix.compiler, 'gcc')
+        shell: bash
+        env:
+          CC: ${{ matrix.compiler }}
+        run: |
+          CXX=${CC/#gcc/g++}
+          sudo apt-add-repository ppa:ubuntu-toolchain-r/test
+          sudo apt-get update
+          sudo apt-get install $CC $CXX
+          echo "CC=$CC" >> $GITHUB_ENV
+          echo "CXX=$CXX" >> $GITHUB_ENV
+
+      - name: 'Setup Clang'
+        if: startsWith(matrix.compiler, 'clang')
+        shell: bash
+        env:
+          CC: ${{ matrix.compiler }}
+        run: |
+          sudo apt-add-repository "deb https://apt.llvm.org/focal/ llvm-toolchain-focal${CC/#clang/} main"
+          sudo apt-get update
+          CXX=${CC/#clang/clang++}
+          sudo apt-get install $CC $CXX
+          echo "CC=$CC" >> $GITHUB_ENV
+          echo "CXX=$CXX" >> $GITHUB_ENV
+
+      - name: 'Setup meson+ninja'
+        shell: bash
+        run: |
+          python -m pip install --user --upgrade meson ninja
+
+      - name: 'Install build Dependencies'
+        shell: bash
+        run: |
+          sudo apt-get -y install python3-dev liblua5.4-dev libspdlog-dev libzstd-dev zlib1g-dev pybind11-dev liblz4-dev liblzma-dev libbz2-dev
+
+      - name: 'Checkout Panko'
+        uses: actions/checkout@v4
+
+      - name: 'Build'
+        shell: bash
+        run: |
+          meson setup build --buildtype debugoptimized -Db_sanitize=address,undefined
+          meson compile -C build
+
+      - name: 'Run Tests'
+        shell: bash
+        run: |
+          meson test -C build
+
+#   build-panko-macos:
+#     runs-on: ['${{ matrix.platform.runner }}', '${{ matrix.platform.arch }}']
+#     strategy:
+#       matrix:
+#         platform:
+#           - runner: macos-13
+#             arch: x86_64
+#           - runner: macos-14
+#             arch: arm64
+#       fail-fast: false
+#     name: 'Panko CI - Build (${{matrix.platform.runner}}, ${{matrix.platform.arch}})'
+#     steps:
+#       - name: 'Initialize Environment'
+#         shell: bash
+#         env:
+#           WORKSPACE: ${{ github.workspace }}
+#         run: |
+#           echo "$HOME/.local/bin:$PATH" >> $GITHUB_PATH
+#           echo "GITHUB_WORKSPACE=\"`pwd`\"" >> $GITHUB_ENV
+#
+#       - name: 'Setup Python (${{ env.TOOL_PYTHON_VERSION }})'
+#         uses: actions/setup-python@v5
+#         with:
+#           python-version: ${{ env.TOOL_PYTHON_VERSION }}
+#
+#       # TODO(aki): Figure out how to set up this mess
+#
+#       - name: 'Checkout Panko'
+#         uses: actions/checkout@v4
+#
+#       - name: 'Build'
+#         shell: bash
+#         run: |
+#           meson setup build --buildtype debugoptimized -Db_sanitize=address,undefined
+#           meson compile -C build
+#
+#       - name: 'Run Tests'
+#         shell: bash
+#         run: |
+#           meson test -C build
+
+
+#   build-panko-windows:
+#     runs-on: ['${{ matrix.platform.runner }}', '${{ matrix.platform.arch }}']
+#     strategy:
+#       matrix:
+#         platform:
+#           - runner: windows-latest
+#             arch: x86_64
+#       fail-fast: false
+#     name: 'Panko CI - Build (${{matrix.platform.runner}}, ${{matrix.platform.arch}})'
+#     steps:
+#       - name: 'Initialize Environment'
+#         shell: bash
+#         env:
+#           WORKSPACE: ${{ github.workspace }}
+#         run: |
+#           echo "$HOME/.local/bin:$PATH" >> $GITHUB_PATH
+#           echo "GITHUB_WORKSPACE=\"`pwd`\"" >> $GITHUB_ENV
+#
+#       - name: 'Setup Python (${{ env.TOOL_PYTHON_VERSION }})'
+#         uses: actions/setup-python@v5
+#         with:
+#           python-version: ${{ env.TOOL_PYTHON_VERSION }}
+#
+#       # TODO(aki): Figure out how to set up compilers on this godforsaken platform
+#
+#       - name: 'Checkout Panko'
+#         uses: actions/checkout@v4
+#
+#       - name: 'Build'
+#         shell: bash
+#         run: |
+#           meson setup build --buildtype debugoptimized -Db_sanitize=address,undefined
+#           meson compile -C build
+#
+#       - name: 'Run Tests'
+#         shell: bash
+#         run: |
+#           meson test -C build
