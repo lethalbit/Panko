@@ -13,3 +13,5 @@ libpanko_srcs += files([
 ])
 
 install_headers(libpanko_capture_headers, subdir: 'panko/capture')
+
+subdir('encapsulation')
