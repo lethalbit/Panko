@@ -5,6 +5,7 @@
 #if !defined(PANKO_CORE_TYPES_HH)
 #define PANKO_CORE_TYPES_HH
 
+#include <atomic>
 #include <array>
 #include <cstddef>
 #include <cstdint>
@@ -89,6 +90,12 @@ namespace Panko::core::types {
 	template<typename T>
 	using promoted_type_t = typename promoted_type<T>::type;
 
+	template<typename T>
+	struct is_atomic_integral : std::is_integral<T> {};
+	template<typename T>
+	struct is_atomic_integral<std::atomic<T>> : std::is_integral<T> {};
+	template<typename T>
+	constexpr inline bool is_atomic_integral_v = is_atomic_integral<T>::value;
 }
 
 #endif /* PANKO_CORE_TYPES_HH */
