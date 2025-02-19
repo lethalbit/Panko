@@ -5,6 +5,7 @@
 
 #include "panko-gui/windows/main.hh"
 
+#include "panko-gui/dialogs/about.hh"
 
 PANKO_DIAGNOSTICS_PUSH()
 PANKO_DIAGNOSTICS_IGNORE("-Wconversion")
@@ -109,7 +110,8 @@ namespace Panko::gui::windows {
 		// _action_help_about->setShortcut(...);
 		_action_help_about->setStatusTip(tr("About Panko"));
 		connect(_action_help_about.get(), &QAction::triggered, this, [this](){
-
+			dialogs::About about{this};
+			about.exec();
 		});
 
 		_action_help_website = std::make_unique<QAction>(tr("Website"), this);
