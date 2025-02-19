@@ -3,7 +3,6 @@
 libpanko_srcs += files([
 	'bytearray.cc',
 	'errcodes.cc',
-	'paths.cc',
 	'strutils.cc',
 ])
 
@@ -12,7 +11,6 @@ libpanko_core_headers = files([
 	'errcodes.hh',
 	'integers.hh',
 	'mmap.hh',
-	'paths.hh',
 	'strutils.hh',
 	'types.hh',
 	'units.hh',

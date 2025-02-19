@@ -2,8 +2,8 @@
 /* paths.hh - Path constants */
 
 #pragma once
-#if !defined(PANKO_CORE_PATHS_HH)
-#define PANKO_CORE_PATHS_HH
+#if !defined(PANKO_SUPPORT_PATHS_HH)
+#define PANKO_SUPPORT_PATHS_HH
 
 #include <string_view>
 #include <filesystem>
@@ -21,7 +21,7 @@
 // HACK(aki): The `cert-err58-cpp` lint is disabled because we can't really
 // do anything about it, I know it's naughty but *shrug*
 // NOLINTBEGIN(cert-err58-cpp)
-namespace Panko::core::paths {
+namespace Panko::support::paths {
 	using namespace std::literals::string_view_literals;
 
 	namespace fs  = std::filesystem;
@@ -85,4 +85,4 @@ namespace Panko::core::paths {
 }
 // NOLINTEND(cert-err58-cpp)
 
-#endif /* PANKO_CORE_PATHS_HH */
+#endif /* PANKO_SUPPORT_PATHS_HH */

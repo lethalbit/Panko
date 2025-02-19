@@ -4,10 +4,10 @@
 #include <filesystem>
 #include <array>
 
-#include "panko/core/paths.hh"
+#include "panko/support/paths.hh"
 
 #include "panko/core/types.hh"
-namespace Panko::core::paths {
+namespace Panko::support::paths {
 	using Panko::core::types::make_array;
 	namespace fs = std::filesystem;
 

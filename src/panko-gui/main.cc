@@ -14,7 +14,7 @@
 #include "panko/internal/defs.hh"
 #include "panko/internal/frontend.hh"
 #include "panko/support/sys.hh"
-#include "panko/core/paths.hh"
+#include "panko/support/paths.hh"
 #include "panko/config.hh"
 
 PANKO_DIAGNOSTICS_PUSH()
