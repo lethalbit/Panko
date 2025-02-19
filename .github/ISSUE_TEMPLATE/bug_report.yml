@@ -1,0 +1,75 @@
+name: Bug Report
+description: "Report an issue with Panko"
+labels: ["pending-verification"]
+body:
+  - type: markdown
+    attributes:
+      value: >
+
+        If you have a general question, please ask it in the [Discussions](https://github.com/lethalbit/Panko/discussions) area
+        or join our [IRC Channel](https://web.libera.chat/#panko).
+
+        If you have a feature request, please fill out the appropriate issue form, this form is for bug reports and/or regressions.
+
+
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: >
+        The Panko version this defect or regression was found on.
+
+        If you were building Ponko from source, use `git describe --tag --always --dirty` in the source
+        repo to collect the version.
+
+    validations:
+      required: true
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: Which OS did this build issue occur on
+      options:
+        - Linux
+        - BSD Variant
+        - macOS
+        - Microsoft Windows
+    validations:
+      required: true
+
+  - type: input
+    id: os-version
+    attributes:
+      label: OS Version
+      description: "The OS release the build issue occurred on"
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: >
+        When providing steps to reproduce the issue, please ensure that the issue
+        is reproducible in the current git main of Panko. Also ensure to
+        provide all necessary source files needed.
+
+
+        Please see [https://stackoverflow.com/help/mcve](https://stackoverflow.com/help/mcve)
+        for information on how to create a Minimal, Complete, and Verifiable Example
+        (MCVE).
+
+  - type: textarea
+    id: bug-desc
+    attributes:
+      label: What happened?
+      description: As clear and detailed of report as possible, as well as how to reproduce it if applicable
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      description: By submitting this issue, you agree to follow our [Code of Conduct](https://github.com/lethalbit/Panko/blob/main/CODE_OF_CONDUCT.md)
+      options:
+        - label: I agree to follow this project's Code of Conduct
+          required: true

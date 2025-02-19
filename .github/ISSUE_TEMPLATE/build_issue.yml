@@ -1,0 +1,76 @@
+name: Build Defect Report
+description: "Report a build issue with Panko"
+labels: ["pending-verification"]
+body:
+  - type: markdown
+    attributes:
+      value: >
+
+        If you have a general question, please ask it in the [Discussions](https://github.com/lethalbit/Panko/discussions) area
+        or join our [IRC Channel](https://web.libera.chat/#panko).
+
+        If you have a feature request, please fill out the appropriate issue form, this form is for build issues and/or regressions.
+
+  - type: input
+    id: git-version
+    attributes:
+      label: Git Version
+      description: "The output of `git describe --tag --always --dirty`"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: Which OS did this build issue occur on
+      options:
+        - Linux
+        - BSD Variant
+        - macOS
+        - Microsoft Windows
+    validations:
+      required: true
+
+  - type: input
+    id: os-version
+    attributes:
+      label: OS Version
+      description: "The OS release the build issue occurred on"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: toolchain
+    attributes:
+      label: Which compiler/toolchain where you using?
+      options:
+        - g++/binutils
+        - clang++/binutils
+        - msvc
+    validations:
+      required: true
+
+  - type: input
+    id: os-version
+    attributes:
+      label: Compiler Version
+      description: "The compiler / toolchain version"
+    validations:
+      required: true
+
+  - type: textarea
+    id: desc
+    attributes:
+      label: Details
+      description: As many relevant details as possible, including compiler and build system output.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      description: By submitting this issue, you agree to follow our [Code of Conduct](https://github.com/lethalbit/Panko/blob/main/CODE_OF_CONDUCT.md)
+      options:
+        - label: I agree to follow this project's Code of Conduct
+          required: true
