@@ -374,6 +374,8 @@ namespace Panko::core {
 				_backing_span{vec.data(), vec.size()}
 			{ }
 
+			/* == Forward/Reverse Iterators == */
+
 			/*! \brief Returns an iterator to the first byte of the `bytearray_t`
 
 				If the `bytearray_t` is empty this will be equivelent to `end()`.
@@ -462,6 +464,8 @@ namespace Panko::core {
 				return _backing_span.rend();
 			}
 
+			/* == Buffer Properties == */
+
 			/*! \brief Returns the length of the `bytearray_t` in bytes.
 
 			*/
@@ -495,6 +499,8 @@ namespace Panko::core {
 // 				return *index<const T>(idx);
 // 			}
 
+			/* == Buffer Slicing == */
+
 			/*! \brief Obtain a sub-slice bytearray_t from this `bytearray_t`.
 
 				This method constructs a sub-slice of this `bytearray_t`.
@@ -522,6 +528,11 @@ namespace Panko::core {
 				const auto len{(end - start) + 1};
 				return {_backing_storage, _backing_span.subspan(start, len), start, nullptr};
 			}
+
+			/* == Buffer conjoining == */
+			/* TODO(aki): Join buffers */
+
+			/* == Raw integer type access == */
 
 			/*! \brief Extract an element at the given offset into the buffer with the specified endian.
 
@@ -592,8 +603,16 @@ namespace Panko::core {
 				return res;
 			}
 
+			/* == String Helpers == */
+
+			/* 8-bit ASCII */
 
 			/*! \brief Read a fixed length 8-bit ASCII encoded string from the `bytearray_t`.
+
+				This method reads a fixed number of bytes from the `bytearray_t` and decodes them as an 8-bit ASCII string.
+
+				It will ingest control characters and null terminators up until the first byte out of the ASCII range
+				is encountered or the target length is reached, whichever occurs first.
 
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param len The length of the string.
@@ -603,6 +622,13 @@ namespace Panko::core {
 
 			/*! \brief Read a fixed length null padded 8-bit ASCII encoded string from the `bytearray_t`.
 
+				This method reads a fixed number of bytes from the `bytearray_t` and decodes them as an 8-bit ASCII string.
+
+				It will ingest control characters and null terminators up until the first byte out of the ASCII range
+				is encountered or the target length is reached, whichever occurs first.
+
+				This method is effectively the same as `string_ascii`.
+
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param len The length of the string.
 			*/
@@ -610,6 +636,11 @@ namespace Panko::core {
 			PANKO_CLS_API std::expected<std::string_view, strdec_error_t> string_ascii_zp(const std::size_t idx, const std::size_t len);
 
 			/*! \brief Read a null-terminated 8-bit ASCII encoded string from the `bytearray_t`.
+
+				This method will read up until a null terminator or `max_len` and decode it as an 8-bit ASCII string.
+
+				It will ingest all control characters up until the first byte out of the ASCII range, if it's a
+				null terminator, or we reach `max_len` if it non-zero, whichever occurs first.
 
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param max_len The maximum length of the string if the null terminator is not found, 0 for no limit.
@@ -619,12 +650,38 @@ namespace Panko::core {
 
 			/*! \brief Read an 8-bit length prefixed 8-bit ASCII encoded string from the `bytearray_t`.
 
+				This method will read the first 8 bits at the offset `idx` as an unsigned integer and use that as the
+				number of ASCII characters to read directly after it.
+
+				It will ingest all control characters and null terminators up until the first byte is outside of the
+				ASCII range or we hit the number of characters contained in the length prefix byte.
+
+				\code{.unparsed}
+				╭─────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN │ String Data ┊
+				├─────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0     8            LEN
+				\endcode
+
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 			*/
 			[[nodiscard]]
 			PANKO_CLS_API std::expected<std::string_view, strdec_error_t> string_ascii_lp8(const std::size_t idx);
 
 			/*! \brief Read a 16-bit length prefixed 8-bit ASCII encoded string from the `bytearray_t`.
+
+				This method will read the first 16 bits at the offset `idx`, decode them as an unsigned integer according
+				to `endian` and use that as the number ASCII characters to read directly after it.
+
+				It will ingest all control characters and null terminators up until the first byte is outside of the
+				ASCII range or we hit the number of characters contained in the length prefix byte.
+
+				\code{.unparsed}
+				╭──────┬──────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN0 │ LEN1 │ String Data ┊
+				├──────┼──────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0      8     16            LEN
+				\endcode
 
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param endian The endian of the integer representing the string length prefix.
@@ -634,6 +691,19 @@ namespace Panko::core {
 
 			/*! \brief Read a 24-bit length prefixed 8-bit ASCII encoded string from the `bytearray_t`.
 
+				This method will read the first 24 bits at the offset `idx`, decode them as an unsigned integer according
+				to `endian` and use that as the number ASCII characters to read directly after it.
+
+				It will ingest all control characters and null terminators up until the first byte is outside of the
+				ASCII range or we hit the number of characters contained in the length prefix byte.
+
+				\code{.unparsed}
+				╭──────┬──────┬──────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN0 │ LEN1 │ LEN2 │ String Data ┊
+				├──────┼──────┼──────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0      8     16     24            LEN
+				\endcode
+
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param endian The endian of the integer representing the string length prefix.
 			*/
@@ -641,6 +711,19 @@ namespace Panko::core {
 			PANKO_CLS_API std::expected<std::string_view, strdec_error_t> string_ascii_lp24(const std::size_t idx, const std::endian endian = std::endian::native);
 
 			/*! \brief Read a 32-bit length prefixed 8-bit ASCII encoded string from the `bytearray_t`.
+
+				This method will read the first 32 bits at the offset `idx`, decode them as an unsigned integer according
+				to `endian` and use that as the number ASCII characters to read directly after it.
+
+				It will ingest all control characters and null terminators up until the first byte is outside of the
+				ASCII range or we hit the number of characters contained in the length prefix byte.
+
+				\code{.unparsed}
+				╭──────┬──────┬──────┬──────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN0 │ LEN1 │ LEN2 │ LEN2 │ String Data ┊
+				├──────┼──────┼──────┼──────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0      8     16     24     32            LEN
+				\endcode
 
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param endian The endian of the integer representing the string length prefix.
@@ -650,6 +733,19 @@ namespace Panko::core {
 
 			/*! \brief Read a 64-bit length prefixed 8-bit ASCII encoded string from the `bytearray_t`.
 
+				This method will read the first 64 bits at the offset `idx`, decode them as an unsigned integer according
+				to `endian` and use that as the number ASCII characters to read directly after it.
+
+				It will ingest all control characters and null terminators up until the first byte is outside of the
+				ASCII range or we hit the number of characters contained in the length prefix byte.
+
+				\code{.unparsed}
+				╭──────┬──────┬──────┬──────┬──────┬──────┬──────┬──────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN0 │ LEN1 │ LEN2 │ LEN2 │ LEN3 │ LEN4 │ LEN5 │ LEN6 │ String Data ┊
+				├──────┼──────┼──────┼──────┼──────┼──────┼──────┼──────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0      8     16     24     32     40     48     56     64            LEN
+				\endcode
+
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param endian The endian of the integer representing the string length prefix.
 			*/
@@ -658,13 +754,32 @@ namespace Panko::core {
 
 			/*! \brief Read a LEB128 length prefixed 8-bit ASCII encoded string from the `bytearray_t`.
 
+				This method will read up to 5 bytes at the offset `idx` to construct an LEB128 byte stream, decode that
+				as an unsigned integer and use that as the number of ASCII characters to read directly after it.
+
+				It will ingest all control characters and null terminators up until the first byte is outside of the
+				ASCII range or we hit the number of characters contained in the length prefix byte.
+
+				\code{.unparsed}
+				╭──────┬┈┈┈┈┈┈┬──────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN0 │ .... │ LENN │ String Data ┊
+				├──────┼┈┈┈┈┈┈┼──────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0      8      N     N+8           LEN
+				\endcode
+
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 			*/
 			[[nodiscard]]
 			PANKO_CLS_API std::expected<std::string_view, strdec_error_t> string_ascii_leb128(const std::size_t idx);
 
+			/* 7-bit ASCII */
 
 			/*! \brief Read a fixed length 7-bit ASCII encoded string from the `bytearray_t`.
+
+				This method reads a fixed number of bytes from the `bytearray_t` and decodes them as 7-bit ASCII string.
+
+				It will ingest control characters and null terminators up until the first byte out of the ASCII
+				range (0x00-0x7F) is encountered or the target length is reached, whichever occurs first.
 
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param len The length of the string.
@@ -674,6 +789,13 @@ namespace Panko::core {
 
 			/*! \brief Read a fixed length null padded 7-bit ASCII encoded string from the `bytearray_t`.
 
+				This method reads a fixed number of bytes from the `bytearray_t` and decodes them as 7-bit ASCII string.
+
+				It will ingest control characters and null terminators up until the first byte out of the ASCII
+				range (0x00-0x7F) is encountered or the target length is reached, whichever occurs first.
+
+				This method is effectively the same as `string_ascii7`.
+
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param len The length of the string.
 			*/
@@ -681,6 +803,11 @@ namespace Panko::core {
 			PANKO_CLS_API std::expected<std::string_view, strdec_error_t> string_ascii7_zp(const std::size_t idx, const std::size_t len);
 
 			/*! \brief Read a null-terminated 7-bit ASCII encoded string from the `bytearray_t`.
+
+				This method will read up until a null terminator (0x00)	or `max_len` and decode it as a 7-bit ASCII string.
+
+				It will ingest all control characters up until the first byte out of the ASCII range (0x00-0x7F),
+				it it's a null terminator, or we reach `max_len` if it non-zero, whichever occurs first.
 
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param max_len The maximum length of the string if the null terminator is not found, 0 for no limit.
@@ -690,12 +817,38 @@ namespace Panko::core {
 
 			/*! \brief Read an 8-bit length prefixed 7-bit ASCII encoded string from the `bytearray_t`.
 
+				This method will read the first 8 bits at the offset `idx` as an unsigned integer and use that as the
+				number of 7-bit ASCII characters to read directly after it.
+
+				It will ingest all control characters and null terminators up until the first byte is outside of the
+				ASCII range (0x00-0x7F) or we hit the number of characters contained in the length prefix byte.
+
+				\code{.unparsed}
+				╭─────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN │ String Data ┊
+				├─────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0     8            LEN
+				\endcode
+
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 			*/
 			[[nodiscard]]
 			PANKO_CLS_API std::expected<std::string_view, strdec_error_t> string_ascii7_lp8(const std::size_t idx);
 
 			/*! \brief Read a 16-bit length prefixed 7-bit ASCII encoded string from the `bytearray_t`.
+
+				This method will read the first 16 bits at the offset `idx`, decode them as an unsigned integer according
+				to `endian` and use that as the number 7-bit ASCII characters to read directly after it.
+
+				It will ingest all control characters and null terminators up until the first byte is outside of the
+				ASCII range (0x00-0x7F) or we hit the number of characters contained in the length prefix byte.
+
+				\code{.unparsed}
+				╭──────┬──────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN0 │ LEN1 │ String Data ┊
+				├──────┼──────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0      8     16            LEN
+				\endcode
 
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param endian The endian of the integer representing the string length prefix.
@@ -705,6 +858,19 @@ namespace Panko::core {
 
 			/*! \brief Read a 24-bit length prefixed 7-bit ASCII encoded string from the `bytearray_t`.
 
+				This method will read the first 24 bits at the offset `idx`, decode them as an unsigned integer according
+				to `endian` and use that as the number 7-bit ASCII characters to read directly after it.
+
+				It will ingest all control characters and null terminators up until the first byte is outside of the
+				ASCII range (0x00-0x7F) or we hit the number of characters contained in the length prefix byte.
+
+				\code{.unparsed}
+				╭──────┬──────┬──────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN0 │ LEN1 │ LEN2 │ String Data ┊
+				├──────┼──────┼──────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0      8     16     24            LEN
+				\endcode
+
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param endian The endian of the integer representing the string length prefix.
 			*/
@@ -712,6 +878,19 @@ namespace Panko::core {
 			PANKO_CLS_API std::expected<std::string_view, strdec_error_t> string_ascii7_lp24(const std::size_t idx, const std::endian endian = std::endian::native);
 
 			/*! \brief Read a 32-bit length prefixed 7-bit ASCII encoded string from the `bytearray_t`.
+
+				This method will read the first 32 bits at the offset `idx`, decode them as an unsigned integer according
+				to `endian` and use that as the number 7-bit ASCII characters to read directly after it.
+
+				It will ingest all control characters and null terminators up until the first byte is outside of the
+				ASCII range (0x00-0x7F) or we hit the number of characters contained in the length prefix byte.
+
+				\code{.unparsed}
+				╭──────┬──────┬──────┬──────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN0 │ LEN1 │ LEN2 │ LEN2 │ String Data ┊
+				├──────┼──────┼──────┼──────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0      8     16     24     32            LEN
+				\endcode
 
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param endian The endian of the integer representing the string length prefix.
@@ -721,6 +900,19 @@ namespace Panko::core {
 
 			/*! \brief Read a 64-bit length prefixed 7-bit ASCII encoded string from the `bytearray_t`.
 
+				This method will read the first 64 bits at the offset `idx`, decode them as an unsigned integer according
+				to `endian` and use that as the number 7-bit ASCII characters to read directly after it.
+
+				It will ingest all control characters and null terminators up until the first byte is outside of the
+				ASCII range (0x00-0x7F) or we hit the number of characters contained in the length prefix byte.
+
+				\code{.unparsed}
+				╭──────┬──────┬──────┬──────┬──────┬──────┬──────┬──────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN0 │ LEN1 │ LEN2 │ LEN2 │ LEN3 │ LEN4 │ LEN5 │ LEN6 │ String Data ┊
+				├──────┼──────┼──────┼──────┼──────┼──────┼──────┼──────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0      8     16     24     32     40     48     56     64            LEN
+				\endcode
+
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param endian The endian of the integer representing the string length prefix.
 			*/
@@ -729,13 +921,32 @@ namespace Panko::core {
 
 			/*! \brief Read a LEB128 length prefixed 7-bit ASCII encoded string from the `bytearray_t`.
 
+				This method will read up to 5 bytes at the offset `idx` to construct an LEB128 byte stream, decode that
+				as an unsigned integer and use that as the number of 7-bit ASCII characters to read directly after it.
+
+				It will ingest all control characters and null terminators up until the first byte is outside of the
+				ASCII range (0x00-0x7F) or we hit the number of characters contained in the length prefix byte.
+
+				\code{.unparsed}
+				╭──────┬┈┈┈┈┈┈┬──────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN0 │ .... │ LENN │ String Data ┊
+				├──────┼┈┈┈┈┈┈┼──────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0      8      N     N+8           LEN
+				\endcode
+
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 			*/
 			[[nodiscard]]
 			PANKO_CLS_API std::expected<std::string_view, strdec_error_t> string_ascii7_leb128(const std::size_t idx);
 
+			/* EBCDIC */
 
 			/*! \brief Read a fixed length EBCDIC encoded string from the `bytearray_t`.
+
+				This method reads a fixed number of bytes from the `bytearray_t` and decodes them an as EBCDIC string.
+
+				It will ingest control characters and null terminators up until the first byte out of the EBCDIC range
+				is encountered or the target length is reached, whichever occurs first.
 
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param len The length of the string.
@@ -745,6 +956,13 @@ namespace Panko::core {
 
 			/*! \brief Read a fixed length null padded EBCDIC encoded string from the `bytearray_t`.
 
+				This method reads a fixed number of bytes from the `bytearray_t` and decodes them an as EBCDIC string.
+
+				It will ingest control characters and null terminators up until the first byte out of the EBCDIC range
+				is encountered or the target length is reached, whichever occurs first.
+
+				This method is effectively the same as 'string_ebcdic`.
+
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param len The length of the string.
 			*/
@@ -752,6 +970,11 @@ namespace Panko::core {
 			PANKO_CLS_API std::expected<std::string_view, strdec_error_t> string_ebcdic_zp(const std::size_t idx, const std::size_t len);
 
 			/*! \brief Read a null-terminated EBCDIC encoded string from the `bytearray_t`.
+
+				This method will read up until a null terminator or `max_len` and decode it as an EBCDIC string.
+
+				It will ingest all control characters up until the first byte out of the EBCDIC range, it it's a
+				null terminator, or we reach `max_len` if it non-zero, whichever occurs first.
 
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param max_len The maximum length of the string if the null terminator is not found, 0 for no limit.
@@ -761,12 +984,38 @@ namespace Panko::core {
 
 			/*! \brief Read an 8-bit length prefixed EBCDIC encoded string from the `bytearray_t`.
 
+				This method will read the first 8 bits at the offset `idx` as an unsigned integer and use that as the
+				number of EBCDIC characters to read directly after it.
+
+				It will ingest all control characters and null terminators up until the first byte is outside of the
+				EBCDIC range or we hit the number of characters contained in the length prefix byte.
+
+				\code{.unparsed}
+				╭─────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN │ String Data ┊
+				├─────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0     8            LEN
+				\endcode
+
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 			*/
 			[[nodiscard]]
 			PANKO_CLS_API std::expected<std::string_view, strdec_error_t> string_ebcdic_lp8(const std::size_t idx);
 
 			/*! \brief Read a 16-bit length prefixed EBCDIC encoded string from the `bytearray_t`.
+
+				This method will read the first 16 bits at the offset `idx`, decode them as an unsigned integer according
+				to `endian` and use that as the number EBCDIC characters to read directly after it.
+
+				It will ingest all control characters and null terminators up until the first byte is outside of the
+				EBCDIC range or we hit the number of characters contained in the length prefix byte.
+
+				\code{.unparsed}
+				╭──────┬──────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN0 │ LEN1 │ String Data ┊
+				├──────┼──────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0      8     16            LEN
+				\endcode
 
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param endian The endian of the integer representing the string length prefix.
@@ -776,6 +1025,19 @@ namespace Panko::core {
 
 			/*! \brief Read a 24-bit length prefixed EBCDIC encoded string from the `bytearray_t`.
 
+				This method will read the first 24 bits at the offset `idx`, decode them as an unsigned integer according
+				to `endian` and use that as the number EBCDIC characters to read directly after it.
+
+				It will ingest all control characters and null terminators up until the first byte is outside of the
+				EBCDIC range or we hit the number of characters contained in the length prefix byte.
+
+				\code{.unparsed}
+				╭──────┬──────┬──────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN0 │ LEN1 │ LEN2 │ String Data ┊
+				├──────┼──────┼──────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0      8     16     24            LEN
+				\endcode
+
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param endian The endian of the integer representing the string length prefix.
 			*/
@@ -783,6 +1045,19 @@ namespace Panko::core {
 			PANKO_CLS_API std::expected<std::string_view, strdec_error_t> string_ebcdic_lp24(const std::size_t idx, const std::endian endian = std::endian::native);
 
 			/*! \brief Read a 32-bit length prefixed EBCDIC encoded string from the `bytearray_t`.
+
+				This method will read the first 32 bits at the offset `idx`, decode them as an unsigned integer according
+				to `endian` and use that as the number EBCDIC characters to read directly after it.
+
+				It will ingest all control characters and null terminators up until the first byte is outside of the
+				EBCDIC range or we hit the number of characters contained in the length prefix byte.
+
+				\code{.unparsed}
+				╭──────┬──────┬──────┬──────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN0 │ LEN1 │ LEN2 │ LEN2 │ String Data ┊
+				├──────┼──────┼──────┼──────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0      8     16     24     32            LEN
+				\endcode
 
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param endian The endian of the integer representing the string length prefix.
@@ -792,6 +1067,19 @@ namespace Panko::core {
 
 			/*! \brief Read a 64-bit length prefixed EBCDIC encoded string from the `bytearray_t`.
 
+				This method will read the first 64 bits at the offset `idx`, decode them as an unsigned integer according
+				to `endian` and use that as the number EBCDIC characters to read directly after it.
+
+				It will ingest all control characters and null terminators up until the first byte is outside of the
+				EBCDIC range or we hit the number of characters contained in the length prefix byte.
+
+				\code{.unparsed}
+				╭──────┬──────┬──────┬──────┬──────┬──────┬──────┬──────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN0 │ LEN1 │ LEN2 │ LEN2 │ LEN3 │ LEN4 │ LEN5 │ LEN6 │ String Data ┊
+				├──────┼──────┼──────┼──────┼──────┼──────┼──────┼──────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0      8     16     24     32     40     48     56     64            LEN
+				\endcode
+
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param endian The endian of the integer representing the string length prefix.
 			*/
@@ -800,13 +1088,32 @@ namespace Panko::core {
 
 			/*! \brief Read a LEB128 length prefixed EBCDIC encoded string from the `bytearray_t`.
 
+				This method will read up to 5 bytes at the offset `idx` to construct an LEB128 byte stream, decode that
+				as an unsigned integer and use that as the number of EBCDIC characters to read directly after it.
+
+				It will ingest all control characters and null terminators up until the first byte is outside of the
+				EBCDIC range or we hit the number of characters contained in the length prefix byte.
+
+				\code{.unparsed}
+				╭──────┬┈┈┈┈┈┈┬──────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN0 │ .... │ LENN │ String Data ┊
+				├──────┼┈┈┈┈┈┈┼──────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0      8      N     N+8           LEN
+				\endcode
+
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 			*/
 			[[nodiscard]]
 			PANKO_CLS_API std::expected<std::string_view, strdec_error_t> string_ebcdic_leb128(const std::size_t idx);
 
+			/* UTF-8 */
 
 			/*! \brief Read a fixed length UTF-8 encoded string from the `bytearray_t`.
+
+				This method reads a fixed number of bytes from the `bytearray_t` and decodes them as UTF-8.
+
+				It will ingest up until the first invalid UTF-8 codepoint encountered or the target length is reached,
+				whichever occurs first.
 
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param len The length of the string.
@@ -816,6 +1123,13 @@ namespace Panko::core {
 
 			/*! \brief Read a fixed length null padded UTF-8 encoded string from the `bytearray_t`.
 
+				This method reads a fixed number of bytes from the `bytearray_t` and decodes them as UTF-8.
+
+				It will ingest up until the first invalid UTF-8 codepoint encountered or the target length is reached,
+				whichever occurs first.
+
+				This method is effectively the same as `string_utf8`.
+
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param len The length of the string.
 			*/
@@ -823,6 +1137,11 @@ namespace Panko::core {
 			PANKO_CLS_API std::expected<std::u8string_view, strdec_error_t> string_utf8_zp(const std::size_t idx, const std::size_t len);
 
 			/*! \brief Read a null-terminated UTF-8 encoded string from the `bytearray_t`.
+
+				This method will read up until a null terminator or `max_len` and decode it as a UTF-8 string.
+
+				It will ingest all control characters up until the first byte out of the UTF-8 codepoint,
+				it it's a null terminator, or we reach `max_len` if it non-zero, whichever occurs first.
 
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param max_len The maximum length of the string if the null terminator is not found, 0 for no limit.
@@ -832,12 +1151,38 @@ namespace Panko::core {
 
 			/*! \brief Read an 8-bit length prefixed UTF-8 encoded string from the `bytearray_t`.
 
+				This method will read the first 8 bits at the offset `idx` as an unsigned integer and use that as the
+				number of UTF-8 codepoints to read directly after it.
+
+				It will ingest all control characters and null terminators up until the first byte is an invalid UTF-8
+				codepoint, or we hit the number of characters contained in the length prefix byte.
+
+				\code{.unparsed}
+				╭─────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN │ String Data ┊
+				├─────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0     8            LEN
+				\endcode
+
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 			*/
 			[[nodiscard]]
 			PANKO_CLS_API std::expected<std::u8string_view, strdec_error_t> string_utf8_lp8(const std::size_t idx);
 
 			/*! \brief Read a 16-bit length prefixed UTF-8 encoded string from the `bytearray_t`.
+
+				This method will read the first 16 bits at the offset `idx`, decode them as an unsigned integer according
+				to `endian` and use that as the number UTF-8 codepoints to read directly after it.
+
+				It will ingest all control characters and null terminators up until the first byte is an invalid UTF-8
+				codepoint, or we hit the number of characters contained in the length prefix byte.
+
+				\code{.unparsed}
+				╭──────┬──────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN0 │ LEN1 │ String Data ┊
+				├──────┼──────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0      8     16            LEN
+				\endcode
 
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param endian The endian of the integer representing the string length prefix.
@@ -847,6 +1192,19 @@ namespace Panko::core {
 
 			/*! \brief Read a 24-bit length prefixed UTF-8 encoded string from the `bytearray_t`.
 
+				This method will read the first 24 bits at the offset `idx`, decode them as an unsigned integer according
+				to `endian` and use that as the number UTF-8 codepoints to read directly after it.
+
+				It will ingest all control characters and null terminators up until the first byte is an invalid UTF-8
+				codepoint, or we hit the number of characters contained in the length prefix byte.
+
+				\code{.unparsed}
+				╭──────┬──────┬──────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN0 │ LEN1 │ LEN2 │ String Data ┊
+				├──────┼──────┼──────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0      8     16     24            LEN
+				\endcode
+
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param endian The endian of the integer representing the string length prefix.
 			*/
@@ -854,6 +1212,19 @@ namespace Panko::core {
 			PANKO_CLS_API std::expected<std::u8string_view, strdec_error_t> string_utf8_lp24(const std::size_t idx, const std::endian endian = std::endian::native);
 
 			/*! \brief Read a 32-bit length prefixed UTF-8 encoded string from the `bytearray_t`.
+
+				This method will read the first 32 bits at the offset `idx`, decode them as an unsigned integer according
+				to `endian` and use that as the number UTF-8 codepoints to read directly after it.
+
+				It will ingest all control characters and null terminators up until the first byte is an invalid UTF-8
+				codepoint, or we hit the number of characters contained in the length prefix byte.
+
+				\code{.unparsed}
+				╭──────┬──────┬──────┬──────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN0 │ LEN1 │ LEN2 │ LEN2 │ String Data ┊
+				├──────┼──────┼──────┼──────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0      8     16     24     32            LEN
+				\endcode
 
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param endian The endian of the integer representing the string length prefix.
@@ -863,6 +1234,19 @@ namespace Panko::core {
 
 			/*! \brief Read a 64-bit length prefixed UTF-8 encoded string from the `bytearray_t`.
 
+				This method will read the first 64 bits at the offset `idx`, decode them as an unsigned integer according
+				to `endian` and use that as the number UTF-8 codepoint to read directly after it.
+
+				It will ingest all control characters and null terminators up until the first byte is an invalid UTF-8
+				codepoint, or we hit the number of characters contained in the length prefix byte.
+
+				\code{.unparsed}
+				╭──────┬──────┬──────┬──────┬──────┬──────┬──────┬──────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN0 │ LEN1 │ LEN2 │ LEN2 │ LEN3 │ LEN4 │ LEN5 │ LEN6 │ String Data ┊
+				├──────┼──────┼──────┼──────┼──────┼──────┼──────┼──────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0      8     16     24     32     40     48     56     64            LEN
+				\endcode
+
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param endian The endian of the integer representing the string length prefix.
 			*/
@@ -871,13 +1255,33 @@ namespace Panko::core {
 
 			/*! \brief Read a LEB128 length prefixed UTF-8 encoded string from the `bytearray_t`.
 
+				This method will read up to 5 bytes at the offset `idx` to construct an LEB128 byte stream, decode that
+				as an unsigned integer and use that as the number of UTF-8 codepoints to read directly after it.
+
+				It will ingest all control characters and null terminators up until the first byte is an invalid UTF-8
+				codepoint, or we hit the number of characters contained in the length prefix byte.
+
+				\code{.unparsed}
+				╭──────┬┈┈┈┈┈┈┬──────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN0 │ .... │ LENN │ String Data ┊
+				├──────┼┈┈┈┈┈┈┼──────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0      8      N     N+8           LEN
+				\endcode
+
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 			*/
 			[[nodiscard]]
 			PANKO_CLS_API std::expected<std::u8string_view, strdec_error_t> string_utf8_leb128(const std::size_t idx);
 
+			/* UTF-16 w/ BOM */
 
 			/*! \brief Read a fixed length UTF-16 encoded string with a Byte-Order-Mark from the `bytearray_t`.
+
+				This method reads a fixed number of bytes from the `bytearray_t` and decodes them as UTF-16 according to
+				the byte-order-mark found at the first byte.
+
+				It will ingest up until the first invalid UTF-16 codepoint encountered or the target length is reached,
+				whichever occurs first, but only if the first codepoint is a valid byte-order-mark.
 
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param len The length of the string.
@@ -887,6 +1291,14 @@ namespace Panko::core {
 
 			/*! \brief Read a fixed length null padded UTF-16 encoded string with a Byte-Order-Mark from the `bytearray_t`.
 
+				This method reads a fixed number of bytes from the `bytearray_t` and decodes them as UTF-16 according to
+				the byte-order-mark found at the first byte.
+
+				It will ingest up until the first invalid UTF-16 codepoint encountered or the target length is reached,
+				whichever occurs first, but only if the first codepoint is a valid byte-order-mark.
+
+				This method is effectively the same as `string_utf16_bom`.
+
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param len The length of the string.
 			*/
@@ -894,6 +1306,13 @@ namespace Panko::core {
 			PANKO_CLS_API std::expected<std::u16string_view, strdec_error_t> string_utf16_bom_zp(const std::size_t idx, const std::size_t len);
 
 			/*! \brief Read a null-terminated UTF-16 encoded string with a Byte-Order-Mark from the `bytearray_t`.
+
+				This method will read up until a null terminator or `max_len` and decode it as UTF-16 according to
+				the byte-order-mark found at the first byte.
+
+				It will ingest all control characters up until the first byte out of the UTF-16 codepoint,
+				it it's a null terminator, or we reach `max_len` if it non-zero, whichever occurs first,
+				but only if the first codepoint is a valid byte-order-mark.
 
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param max_len The maximum length of the string if the null terminator is not found, 0 for no limit.
@@ -903,12 +1322,46 @@ namespace Panko::core {
 
 			/*! \brief Read an 8-bit length prefixed UTF-16 encoded string with a Byte-Order-Mark from the `bytearray_t`.
 
+				This method will read the first 8 bits at the offset `idx` as an unsigned integer and use that as the
+				number of UTF-16 codepoints to read directly after it.
+
+				The UTF-16 codepoints are decoded according to the Byte-Order-Mark found as the first codepoint in the
+				string directly preceding the end of the length prefix bytes.
+
+				It will ingest all control characters and null terminators up until the first byte is an invalid UTF-16
+				codepoint, or we hit the number of characters contained in the length prefix byte, but only if the first
+				codepoint is a valid byte-order-mark.
+
+				\code{.unparsed}
+				╭─────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN │ String Data ┊
+				├─────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0     8            LEN
+				\endcode
+
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 			*/
 			[[nodiscard]]
 			PANKO_CLS_API std::expected<std::u16string_view, strdec_error_t> string_utf16_bom_lp8(const std::size_t idx);
 
 			/*! \brief Read a 16-bit length prefixed UTF-16 encoded string with a Byte-Order-Mark from the `bytearray_t`.
+
+				This method will read the first 16 bits at the offset `idx`, decode them as an unsigned integer according
+				to `endian` and use that as the number UTF-16 codepoints to read directly after it.
+
+				The UTF-16 codepoints are decoded according to the Byte-Order-Mark found as the first codepoint in the
+				string directly preceding the end of the length prefix bytes.
+
+				It will ingest all control characters and null terminators up until the first byte is an invalid UTF-16
+				codepoint, or we hit the number of characters contained in the length prefix byte, but only if the first
+				codepoint is a valid byte-order-mark.
+
+				\code{.unparsed}
+				╭──────┬──────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN0 │ LEN1 │ String Data ┊
+				├──────┼──────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0      8     16            LEN
+				\endcode
 
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param endian The endian of the integer representing the string length prefix.
@@ -918,6 +1371,23 @@ namespace Panko::core {
 
 			/*! \brief Read a 24-bit length prefixed UTF-16 encoded string with a Byte-Order-Mark from the `bytearray_t`.
 
+				This method will read the first 24 bits at the offset `idx`, decode them as an unsigned integer according
+				to `endian` and use that as the number UTF-16 codepoints to read directly after it.
+
+				The UTF-16 codepoints are decoded according to the Byte-Order-Mark found as the first codepoint in the
+				string directly preceding the end of the length prefix bytes.
+
+				It will ingest all control characters and null terminators up until the first byte is an invalid UTF-16
+				codepoint, or we hit the number of characters contained in the length prefix byte, but only if the first
+				codepoint is a valid byte-order-mark.
+
+				\code{.unparsed}
+				╭──────┬──────┬──────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN0 │ LEN1 │ LEN2 │ String Data ┊
+				├──────┼──────┼──────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0      8     16     24            LEN
+				\endcode
+
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param endian The endian of the integer representing the string length prefix.
 			*/
@@ -925,6 +1395,23 @@ namespace Panko::core {
 			PANKO_CLS_API std::expected<std::u16string_view, strdec_error_t> string_utf16_bom_lp24(const std::size_t idx, const std::endian endian = std::endian::native);
 
 			/*! \brief Read a 32-bit length prefixed UTF-16 encoded string with a Byte-Order-Mark from the `bytearray_t`.
+
+				This method will read the first 32 bits at the offset `idx`, decode them as an unsigned integer according
+				to `endian` and use that as the number UTF-16 codepoints to read directly after it.
+
+				The UTF-16 codepoints are decoded according to the Byte-Order-Mark found as the first codepoint in the
+				string directly preceding the end of the length prefix bytes.
+
+				It will ingest all control characters and null terminators up until the first byte is an invalid UTF-16
+				codepoint, or we hit the number of characters contained in the length prefix byte, but only if the first
+				codepoint is a valid byte-order-mark.
+
+				\code{.unparsed}
+				╭──────┬──────┬──────┬──────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN0 │ LEN1 │ LEN2 │ LEN2 │ String Data ┊
+				├──────┼──────┼──────┼──────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0      8     16     24     32            LEN
+				\endcode
 
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param endian The endian of the integer representing the string length prefix.
@@ -934,6 +1421,23 @@ namespace Panko::core {
 
 			/*! \brief Read a 64-bit length prefixed UTF-16 encoded string with a Byte-Order-Mark from the `bytearray_t`.
 
+				This method will read the first 64 bits at the offset `idx`, decode them as an unsigned integer according
+				to `endian` and use that as the number UTF-16 codepoints to read directly after it.
+
+				The UTF-16 codepoints are decoded according to the Byte-Order-Mark found as the first codepoint in the
+				string directly preceding the end of the length prefix bytes.
+
+				It will ingest all control characters and null terminators up until the first byte is an invalid UTF-16
+				codepoint, or we hit the number of characters contained in the length prefix byte, but only if the first
+				codepoint is a valid byte-order-mark.
+
+				\code{.unparsed}
+				╭──────┬──────┬──────┬──────┬──────┬──────┬──────┬──────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN0 │ LEN1 │ LEN2 │ LEN2 │ LEN3 │ LEN4 │ LEN5 │ LEN6 │ String Data ┊
+				├──────┼──────┼──────┼──────┼──────┼──────┼──────┼──────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0      8     16     24     32     40     48     56     64            LEN
+				\endcode
+
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param endian The endian of the integer representing the string length prefix.
 			*/
@@ -942,13 +1446,36 @@ namespace Panko::core {
 
 			/*! \brief Read a LEB128 length prefixed UTF-16 encoded string with a Byte-Order-Mark from the `bytearray_t`.
 
+				This method will read up to 5 bytes at the offset `idx` to construct an LEB128 byte stream, decode that
+				as an unsigned integer and use that as the number of UTF-16 codepoints to read directly after it.
+
+				The UTF-16 codepoints are decoded according to the Byte-Order-Mark found as the first codepoint in the
+				string directly preceding the end of the length prefix bytes.
+
+				It will ingest all control characters and null terminators up until the first byte is an invalid UTF-16
+				codepoint, or we hit the number of characters contained in the length prefix byte, but only if the first
+				codepoint is a valid byte-order-mark.
+
+				\code{.unparsed}
+				╭──────┬┈┈┈┈┈┈┬──────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN0 │ .... │ LENN │ String Data ┊
+				├──────┼┈┈┈┈┈┈┼──────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0      8      N     N+8           LEN
+				\endcode
+
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 			*/
 			[[nodiscard]]
 			PANKO_CLS_API std::expected<std::u16string_view, strdec_error_t> string_utf16_bom_leb128(const std::size_t idx);
 
+			/* UTF-16 Little Endian */
 
 			/*! \brief Read a fixed length little endian UTF-16 encoded string from the `bytearray_t`.
+
+				This method reads a fixed number of bytes from the `bytearray_t` and decodes them as UTF-16 little-endian.
+
+				It will ingest up until the first invalid UTF-16 codepoint encountered or the target length is reached,
+				whichever occurs first.
 
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param len The length of the string.
@@ -958,6 +1485,13 @@ namespace Panko::core {
 
 			/*! \brief Read a fixed length null padded little endian UTF-16 encoded string from the `bytearray_t`.
 
+				This method reads a fixed number of bytes from the `bytearray_t` and decodes them as UTF-16 little-endian.
+
+				It will ingest up until the first invalid UTF-16 codepoint encountered or the target length is reached,
+				whichever occurs first.
+
+				This method is effectively the same as `string_utf16le`.
+
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param len The length of the string.
 			*/
@@ -965,6 +1499,12 @@ namespace Panko::core {
 			PANKO_CLS_API std::expected<std::u16string_view, strdec_error_t> string_utf16le_zp(const std::size_t idx, const std::size_t len);
 
 			/*! \brief Read a null-terminated little endian UTF-16 encoded string from the `bytearray_t`.
+
+				This method will read up until a null terminator or `max_len` and decode it as a UTF-16 little-endian
+				string.
+
+				It will ingest all control characters up until the first byte out of the UTF-16 codepoint,
+				it it's a null terminator, or we reach `max_len` if it non-zero, whichever occurs first.
 
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param max_len The maximum length of the string if the null terminator is not found, 0 for no limit.
@@ -974,12 +1514,38 @@ namespace Panko::core {
 
 			/*! \brief Read an 8-bit length prefixed little endian UTF-16 encoded string from the `bytearray_t`.
 
+				This method will read the first 8 bits at the offset `idx` as an unsigned integer and use that as the
+				number of UTF-16 little endian codepoints to read directly after it.
+
+				It will ingest all control characters and null terminators up until the first byte is an invalid UTF-16
+				codepoint, or we hit the number of characters contained in the length prefix byte.
+
+				\code{.unparsed}
+				╭─────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN │ String Data ┊
+				├─────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0     8            LEN
+				\endcode
+
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 			*/
 			[[nodiscard]]
 			PANKO_CLS_API std::expected<std::u16string_view, strdec_error_t> string_utf16le_lp8(const std::size_t idx);
 
 			/*! \brief Read a 16-bit length prefixed little endian UTF-16 encoded string from the `bytearray_t`.
+
+				This method will read the first 16 bits at the offset `idx`, decode them as an unsigned integer according
+				to `endian` and use that as the number UTF-16 little endian codepoints to read directly after it.
+
+				It will ingest all control characters and null terminators up until the first byte is an invalid UTF-16
+				codepoint, or we hit the number of characters contained in the length prefix byte.
+
+				\code{.unparsed}
+				╭──────┬──────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN0 │ LEN1 │ String Data ┊
+				├──────┼──────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0      8     16            LEN
+				\endcode
 
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param endian The endian of the integer representing the string length prefix.
@@ -989,6 +1555,19 @@ namespace Panko::core {
 
 			/*! \brief Read a 24-bit length prefixed little endian UTF-16 encoded string from the `bytearray_t`.
 
+				This method will read the first 24 bits at the offset `idx`, decode them as an unsigned integer according
+				to `endian` and use that as the number UTF-16 little endian codepoints to read directly after it.
+
+				It will ingest all control characters and null terminators up until the first byte is an invalid UTF-16
+				codepoint, or we hit the number of characters contained in the length prefix byte.
+
+				\code{.unparsed}
+				╭──────┬──────┬──────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN0 │ LEN1 │ LEN2 │ String Data ┊
+				├──────┼──────┼──────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0      8     16     24            LEN
+				\endcode
+
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param endian The endian of the integer representing the string length prefix.
 			*/
@@ -996,6 +1575,19 @@ namespace Panko::core {
 			PANKO_CLS_API std::expected<std::u16string_view, strdec_error_t> string_utf16le_lp24(const std::size_t idx, const std::endian endian = std::endian::native);
 
 			/*! \brief Read a 32-bit length prefixed little endian UTF-16 encoded string from the `bytearray_t`.
+
+				This method will read the first 32 bits at the offset `idx`, decode them as an unsigned integer according
+				to `endian` and use that as the number UTF-16 little endian codepoints to read directly after it.
+
+				It will ingest all control characters and null terminators up until the first byte is an invalid UTF-16
+				codepoint, or we hit the number of characters contained in the length prefix byte.
+
+				\code{.unparsed}
+				╭──────┬──────┬──────┬──────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN0 │ LEN1 │ LEN2 │ LEN2 │ String Data ┊
+				├──────┼──────┼──────┼──────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0      8     16     24     32            LEN
+				\endcode
 
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param endian The endian of the integer representing the string length prefix.
@@ -1005,6 +1597,19 @@ namespace Panko::core {
 
 			/*! \brief Read a 64-bit length prefixed little endian UTF-16 encoded string from the `bytearray_t`.
 
+				This method will read the first 64 bits at the offset `idx`, decode them as an unsigned integer according
+				to `endian` and use that as the number UTF-16 little endian codepoint to read directly after it.
+
+				It will ingest all control characters and null terminators up until the first byte is an invalid UTF-16
+				codepoint, or we hit the number of characters contained in the length prefix byte.
+
+				\code{.unparsed}
+				╭──────┬──────┬──────┬──────┬──────┬──────┬──────┬──────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN0 │ LEN1 │ LEN2 │ LEN2 │ LEN3 │ LEN4 │ LEN5 │ LEN6 │ String Data ┊
+				├──────┼──────┼──────┼──────┼──────┼──────┼──────┼──────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0      8     16     24     32     40     48     56     64            LEN
+				\endcode
+
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param endian The endian of the integer representing the string length prefix.
 			*/
@@ -1013,13 +1618,33 @@ namespace Panko::core {
 
 			/*! \brief Read a LEB128 length prefixed little endian UTF-16 encoded string from the `bytearray_t`.
 
+				This method will read up to 5 bytes at the offset `idx` to construct an LEB128 byte stream, decode that
+				as an unsigned integer and use that as the number of UTF-16 little endian codepoints to read directly
+				after it.
+
+				It will ingest all control characters and null terminators up until the first byte is an invalid UTF-16
+				codepoint, or we hit the number of characters contained in the length prefix byte.
+
+				\code{.unparsed}
+				╭──────┬┈┈┈┈┈┈┬──────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN0 │ .... │ LENN │ String Data ┊
+				├──────┼┈┈┈┈┈┈┼──────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0      8      N     N+8           LEN
+				\endcode
+
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 			*/
 			[[nodiscard]]
 			PANKO_CLS_API std::expected<std::u16string_view, strdec_error_t> string_utf16le_leb128(const std::size_t idx);
 
+			/* UTF-16 Big Endian */
 
 			/*! \brief Read a fixed length big endian UTF-16 encoded string from the `bytearray_t`.
+
+				This method reads a fixed number of bytes from the `bytearray_t` and decodes them as UTF-16 big-endian.
+
+				It will ingest up until the first invalid UTF-16 codepoint encountered or the target length is reached,
+				whichever occurs first.
 
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param len The length of the string.
@@ -1029,6 +1654,13 @@ namespace Panko::core {
 
 			/*! \brief Read a fixed length null padded big endian UTF-16 encoded string from the `bytearray_t`.
 
+				This method reads a fixed number of bytes from the `bytearray_t` and decodes them as UTF-16 big-endian.
+
+				It will ingest up until the first invalid UTF-16 codepoint encountered or the target length is reached,
+				whichever occurs first.
+
+				This method is effectively the same as `string_utf16be`.
+
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param len The length of the string.
 			*/
@@ -1036,6 +1668,12 @@ namespace Panko::core {
 			PANKO_CLS_API std::expected<std::u16string_view, strdec_error_t> string_utf16be_zp(const std::size_t idx, const std::size_t len);
 
 			/*! \brief Read a null-terminated big endian UTF-16 encoded string from the `bytearray_t`.
+
+				This method will read up until a null terminator or `max_len` and decode it as a UTF-16 big-endian
+				string.
+
+				It will ingest all control characters up until the first byte out of the UTF-16 codepoint,
+				it it's a null terminator, or we reach `max_len` if it non-zero, whichever occurs first.
 
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param max_len The maximum length of the string if the null terminator is not found, 0 for no limit.
@@ -1045,12 +1683,38 @@ namespace Panko::core {
 
 			/*! \brief Read an 8-bit length prefixed big endian UTF-16 encoded string from the `bytearray_t`.
 
+				This method will read the first 8 bits at the offset `idx` as an unsigned integer and use that as the
+				number of UTF-8 big endian codepoints to read directly after it.
+
+				It will ingest all control characters and null terminators up until the first byte is an invalid UTF-16
+				codepoint, or we hit the number of characters contained in the length prefix byte.
+
+				\code{.unparsed}
+				╭─────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN │ String Data ┊
+				├─────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0     8            LEN
+				\endcode
+
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 			*/
 			[[nodiscard]]
 			PANKO_CLS_API std::expected<std::u16string_view, strdec_error_t> string_utf16be_lp8(const std::size_t idx);
 
 			/*! \brief Read a 16-bit length prefixed big endian UTF-16 encoded string from the `bytearray_t`.
+
+				This method will read the first 16 bits at the offset `idx`, decode them as an unsigned integer according
+				to `endian` and use that as the number UTF-16 big endian codepoints to read directly after it.
+
+				It will ingest all control characters and null terminators up until the first byte is an invalid UTF-16
+				codepoint, or we hit the number of characters contained in the length prefix byte.
+
+				\code{.unparsed}
+				╭──────┬──────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN0 │ LEN1 │ String Data ┊
+				├──────┼──────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0      8     16            LEN
+				\endcode
 
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param endian The endian of the integer representing the string length prefix.
@@ -1060,6 +1724,19 @@ namespace Panko::core {
 
 			/*! \brief Read a 24-bit length prefixed big endian UTF-16 encoded string from the `bytearray_t`.
 
+				This method will read the first 24 bits at the offset `idx`, decode them as an unsigned integer according
+				to `endian` and use that as the number UTF-16 big endian codepoints to read directly after it.
+
+				It will ingest all control characters and null terminators up until the first byte is an invalid UTF-16
+				codepoint, or we hit the number of characters contained in the length prefix byte.
+
+				\code{.unparsed}
+				╭──────┬──────┬──────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN0 │ LEN1 │ LEN2 │ String Data ┊
+				├──────┼──────┼──────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0      8     16     24            LEN
+				\endcode
+
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param endian The endian of the integer representing the string length prefix.
 			*/
@@ -1067,6 +1744,19 @@ namespace Panko::core {
 			PANKO_CLS_API std::expected<std::u16string_view, strdec_error_t> string_utf16be_lp24(const std::size_t idx, const std::endian endian = std::endian::native);
 
 			/*! \brief Read a 32-bit length prefixed big endian UTF-16 encoded string from the `bytearray_t`.
+
+				This method will read the first 32 bits at the offset `idx`, decode them as an unsigned integer according
+				to `endian` and use that as the number UTF-16 big endian codepoints to read directly after it.
+
+				It will ingest all control characters and null terminators up until the first byte is an invalid UTF-16
+				codepoint, or we hit the number of characters contained in the length prefix byte.
+
+				\code{.unparsed}
+				╭──────┬──────┬──────┬──────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN0 │ LEN1 │ LEN2 │ LEN2 │ String Data ┊
+				├──────┼──────┼──────┼──────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0      8     16     24     32            LEN
+				\endcode
 
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param endian The endian of the integer representing the string length prefix.
@@ -1076,6 +1766,19 @@ namespace Panko::core {
 
 			/*! \brief Read a 64-bit length prefixed big endian UTF-16 encoded string from the `bytearray_t`.
 
+				This method will read the first 64 bits at the offset `idx`, decode them as an unsigned integer according
+				to `endian` and use that as the number UTF-16 big endian codepoint to read directly after it.
+
+				It will ingest all control characters and null terminators up until the first byte is an invalid UTF-16
+				codepoint, or we hit the number of characters contained in the length prefix byte.
+
+				\code{.unparsed}
+				╭──────┬──────┬──────┬──────┬──────┬──────┬──────┬──────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN0 │ LEN1 │ LEN2 │ LEN2 │ LEN3 │ LEN4 │ LEN5 │ LEN6 │ String Data ┊
+				├──────┼──────┼──────┼──────┼──────┼──────┼──────┼──────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0      8     16     24     32     40     48     56     64            LEN
+				\endcode
+
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param endian The endian of the integer representing the string length prefix.
 			*/
@@ -1084,13 +1787,33 @@ namespace Panko::core {
 
 			/*! \brief Read a LEB128 length prefixed big endian UTF-16 encoded string from the `bytearray_t`.
 
+				This method will read up to 5 bytes at the offset `idx` to construct an LEB128 byte stream, decode that
+				as an unsigned integer and use that as the number of UTF-16 big endian codepoints to read directly after it.
+
+				It will ingest all control characters and null terminators up until the first byte is an invalid UTF-16
+				codepoint, or we hit the number of characters contained in the length prefix byte.
+
+				\code{.unparsed}
+				╭──────┬┈┈┈┈┈┈┬──────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN0 │ .... │ LENN │ String Data ┊
+				├──────┼┈┈┈┈┈┈┼──────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0      8      N     N+8           LEN
+				\endcode
+
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 			*/
 			[[nodiscard]]
 			PANKO_CLS_API std::expected<std::u16string_view, strdec_error_t> string_utf16be_leb128(const std::size_t idx);
 
+			/* UTF-32 w/ BOM */
 
 			/*! \brief Read a fixed length UTF-32 encoded string with a Byte-Order-Mark from the `bytearray_t`.
+
+				This method reads a fixed number of bytes from the `bytearray_t` and decodes them as UTF-32 according to
+				the byte-order-mark found at the first byte.
+
+				It will ingest up until the first invalid UTF-32 codepoint encountered or the target length is reached,
+				whichever occurs first, but only if the first codepoint is a valid byte-order-mark.
 
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param len The length of the string.
@@ -1100,6 +1823,14 @@ namespace Panko::core {
 
 			/*! \brief Read a fixed length null padded UTF-32 encoded string with a Byte-Order-Mark from the `bytearray_t`.
 
+				This method reads a fixed number of bytes from the `bytearray_t` and decodes them as UTF-32 according to
+				the byte-order-mark found at the first byte.
+
+				It will ingest up until the first invalid UTF-32 codepoint encountered or the target length is reached,
+				whichever occurs first, but only if the first codepoint is a valid byte-order-mark.
+
+				This method is effectively the same as `string_utf32_bom`.
+
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param len The length of the string.
 			*/
@@ -1107,6 +1838,13 @@ namespace Panko::core {
 			PANKO_CLS_API std::expected<std::u32string_view, strdec_error_t> string_utf32_bom_zp(const std::size_t idx, const std::size_t len);
 
 			/*! \brief Read a null-terminated UTF-32 encoded string with a Byte-Order-Mark from the `bytearray_t`.
+
+				This method will read up until a null terminator or `max_len` and decode it as UTF-32 according to
+				the byte-order-mark found at the first byte.
+
+				It will ingest all control characters up until the first byte out of the UTF-32 codepoint,
+				it it's a null terminator, or we reach `max_len` if it non-zero, whichever occurs first,
+				but only if the first codepoint is a valid byte-order-mark.
 
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param max_len The maximum length of the string if the null terminator is not found, 0 for no limit.
@@ -1116,12 +1854,46 @@ namespace Panko::core {
 
 			/*! \brief Read an 8-bit length prefixed UTF-32 encoded string with a Byte-Order-Mark from the `bytearray_t`.
 
+				This method will read the first 8 bits at the offset `idx` as an unsigned integer and use that as the
+				number of UTF-32 codepoints to read directly after it.
+
+				The UTF-32 codepoints are decoded according to the Byte-Order-Mark found as the first codepoint in the
+				string directly preceding the end of the length prefix bytes.
+
+				It will ingest all control characters and null terminators up until the first byte is an invalid UTF-32
+				codepoint, or we hit the number of characters contained in the length prefix byte, but only if the first
+				codepoint is a valid byte-order-mark.
+
+				\code{.unparsed}
+				╭─────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN │ String Data ┊
+				├─────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0     8            LEN
+				\endcode
+
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 			*/
 			[[nodiscard]]
 			PANKO_CLS_API std::expected<std::u32string_view, strdec_error_t> string_utf32_bom_lp8(const std::size_t idx);
 
 			/*! \brief Read a 16-bit length prefixed UTF-32 encoded string with a Byte-Order-Mark from the `bytearray_t`.
+
+				This method will read the first 16 bits at the offset `idx`, decode them as an unsigned integer according
+				to `endian` and use that as the number UTF-32 codepoints to read directly after it.
+
+				The UTF-32 codepoints are decoded according to the Byte-Order-Mark found as the first codepoint in the
+				string directly preceding the end of the length prefix bytes.
+
+				It will ingest all control characters and null terminators up until the first byte is an invalid UTF-32
+				codepoint, or we hit the number of characters contained in the length prefix byte, but only if the first
+				codepoint is a valid byte-order-mark.
+
+				\code{.unparsed}
+				╭──────┬──────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN0 │ LEN1 │ String Data ┊
+				├──────┼──────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0      8     16            LEN
+				\endcode
 
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param endian The endian of the integer representing the string length prefix.
@@ -1131,6 +1903,23 @@ namespace Panko::core {
 
 			/*! \brief Read a 24-bit length prefixed UTF-32 encoded string with a Byte-Order-Mark from the `bytearray_t`.
 
+				This method will read the first 24 bits at the offset `idx`, decode them as an unsigned integer according
+				to `endian` and use that as the number UTF-32 codepoints to read directly after it.
+
+				The UTF-32 codepoints are decoded according to the Byte-Order-Mark found as the first codepoint in the
+				string directly preceding the end of the length prefix bytes.
+
+				It will ingest all control characters and null terminators up until the first byte is an invalid UTF-32
+				codepoint, or we hit the number of characters contained in the length prefix byte, but only if the first
+				codepoint is a valid byte-order-mark.
+
+				\code{.unparsed}
+				╭──────┬──────┬──────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN0 │ LEN1 │ LEN2 │ String Data ┊
+				├──────┼──────┼──────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0      8     16     24            LEN
+				\endcode
+
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param endian The endian of the integer representing the string length prefix.
 			*/
@@ -1138,6 +1927,23 @@ namespace Panko::core {
 			PANKO_CLS_API std::expected<std::u32string_view, strdec_error_t> string_utf32_bom_lp24(const std::size_t idx, const std::endian endian = std::endian::native);
 
 			/*! \brief Read a 32-bit length prefixed UTF-32 encoded string with a Byte-Order-Mark from the `bytearray_t`.
+
+				This method will read the first 32 bits at the offset `idx`, decode them as an unsigned integer according
+				to `endian` and use that as the number UTF-32 codepoints to read directly after it.
+
+				The UTF-32 codepoints are decoded according to the Byte-Order-Mark found as the first codepoint in the
+				string directly preceding the end of the length prefix bytes.
+
+				It will ingest all control characters and null terminators up until the first byte is an invalid UTF-32
+				codepoint, or we hit the number of characters contained in the length prefix byte, but only if the first
+				codepoint is a valid byte-order-mark.
+
+				\code{.unparsed}
+				╭──────┬──────┬──────┬──────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN0 │ LEN1 │ LEN2 │ LEN2 │ String Data ┊
+				├──────┼──────┼──────┼──────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0      8     16     24     32            LEN
+				\endcode
 
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param endian The endian of the integer representing the string length prefix.
@@ -1147,6 +1953,23 @@ namespace Panko::core {
 
 			/*! \brief Read a 64-bit length prefixed UTF-32 encoded string with a Byte-Order-Mark from the `bytearray_t`.
 
+				This method will read the first 64 bits at the offset `idx`, decode them as an unsigned integer according
+				to `endian` and use that as the number UTF-32 codepoints to read directly after it.
+
+				The UTF-32 codepoints are decoded according to the Byte-Order-Mark found as the first codepoint in the
+				string directly preceding the end of the length prefix bytes.
+
+				It will ingest all control characters and null terminators up until the first byte is an invalid UTF-32
+				codepoint, or we hit the number of characters contained in the length prefix byte, but only if the first
+				codepoint is a valid byte-order-mark.
+
+				\code{.unparsed}
+				╭──────┬──────┬──────┬──────┬──────┬──────┬──────┬──────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN0 │ LEN1 │ LEN2 │ LEN2 │ LEN3 │ LEN4 │ LEN5 │ LEN6 │ String Data ┊
+				├──────┼──────┼──────┼──────┼──────┼──────┼──────┼──────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0      8     16     24     32     40     48     56     64            LEN
+				\endcode
+
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param endian The endian of the integer representing the string length prefix.
 			*/
@@ -1155,13 +1978,36 @@ namespace Panko::core {
 
 			/*! \brief Read a LEB128 length prefixed UTF-32 encoded string with a Byte-Order-Mark from the `bytearray_t`.
 
+				This method will read up to 5 bytes at the offset `idx` to construct an LEB128 byte stream, decode that
+				as an unsigned integer and use that as the number of UTF-32 codepoints to read directly after it.
+
+				The UTF-32 codepoints are decoded according to the Byte-Order-Mark found as the first codepoint in the
+				string directly preceding the end of the length prefix bytes.
+
+				It will ingest all control characters and null terminators up until the first byte is an invalid UTF-32
+				codepoint, or we hit the number of characters contained in the length prefix byte, but only if the first
+				codepoint is a valid byte-order-mark.
+
+				\code{.unparsed}
+				╭──────┬┈┈┈┈┈┈┬──────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN0 │ .... │ LENN │ String Data ┊
+				├──────┼┈┈┈┈┈┈┼──────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0      8      N     N+8           LEN
+				\endcode
+
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 			*/
 			[[nodiscard]]
 			PANKO_CLS_API std::expected<std::u32string_view, strdec_error_t> string_utf32_bom_leb128(const std::size_t idx);
 
+			/* UTF-32 Little Endian */
 
 			/*! \brief Read a fixed length little endian UTF-32 encoded string from the `bytearray_t`.
+
+				This method reads a fixed number of bytes from the `bytearray_t` and decodes them as UTF-32 little-endian.
+
+				It will ingest up until the first invalid UTF-32 codepoint encountered or the target length is reached,
+				whichever occurs first.
 
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param len The length of the string.
@@ -1171,6 +2017,13 @@ namespace Panko::core {
 
 			/*! \brief Read a fixed length null padded little endian UTF-32 encoded string from the `bytearray_t`.
 
+				This method reads a fixed number of bytes from the `bytearray_t` and decodes them as UTF-32 little-endian.
+
+				It will ingest up until the first invalid UTF-32 codepoint encountered or the target length is reached,
+				whichever occurs first.
+
+				This method is effectively the same as `string_utf32le`.
+
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param len The length of the string.
 			*/
@@ -1178,6 +2031,12 @@ namespace Panko::core {
 			PANKO_CLS_API std::expected<std::u32string_view, strdec_error_t> string_utf32le_zp(const std::size_t idx, const std::size_t len);
 
 			/*! \brief Read a null-terminated little endian UTF-32 encoded string from the `bytearray_t`.
+
+				This method will read up until a null terminator or `max_len` and decode it as a UTF-32 little-endian
+				string.
+
+				It will ingest all control characters up until the first byte out of the UTF-32 codepoint,
+				it it's a null terminator, or we reach `max_len` if it non-zero, whichever occurs first.
 
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param max_len The maximum length of the string if the null terminator is not found, 0 for no limit.
@@ -1187,12 +2046,38 @@ namespace Panko::core {
 
 			/*! \brief Read an 8-bit length prefixed little endian UTF-32 encoded string from the `bytearray_t`.
 
+				This method will read the first 8 bits at the offset `idx` as an unsigned integer and use that as the
+				number of UTF-32 little endian codepoints to read directly after it.
+
+				It will ingest all control characters and null terminators up until the first byte is an invalid UTF-32
+				codepoint, or we hit the number of characters contained in the length prefix byte.
+
+				\code{.unparsed}
+				╭─────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN │ String Data ┊
+				├─────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0     8            LEN
+				\endcode
+
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 			*/
 			[[nodiscard]]
 			PANKO_CLS_API std::expected<std::u32string_view, strdec_error_t> string_utf32le_lp8(const std::size_t idx);
 
 			/*! \brief Read a 16-bit length prefixed little endian UTF-32 encoded string from the `bytearray_t`.
+
+				This method will read the first 16 bits at the offset `idx`, decode them as an unsigned integer according
+				to `endian` and use that as the number UTF-32 little endian codepoints to read directly after it.
+
+				It will ingest all control characters and null terminators up until the first byte is an invalid UTF-32
+				codepoint, or we hit the number of characters contained in the length prefix byte.
+
+				\code{.unparsed}
+				╭──────┬──────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN0 │ LEN1 │ String Data ┊
+				├──────┼──────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0      8     16            LEN
+				\endcode
 
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param endian The endian of the integer representing the string length prefix.
@@ -1202,6 +2087,19 @@ namespace Panko::core {
 
 			/*! \brief Read a 24-bit length prefixed little endian UTF-32 encoded string from the `bytearray_t`.
 
+				This method will read the first 24 bits at the offset `idx`, decode them as an unsigned integer according
+				to `endian` and use that as the number UTF-32 little endian codepoints to read directly after it.
+
+				It will ingest all control characters and null terminators up until the first byte is an invalid UTF-32
+				codepoint, or we hit the number of characters contained in the length prefix byte.
+
+				\code{.unparsed}
+				╭──────┬──────┬──────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN0 │ LEN1 │ LEN2 │ String Data ┊
+				├──────┼──────┼──────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0      8     16     24            LEN
+				\endcode
+
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param endian The endian of the integer representing the string length prefix.
 			*/
@@ -1209,6 +2107,19 @@ namespace Panko::core {
 			PANKO_CLS_API std::expected<std::u32string_view, strdec_error_t> string_utf32le_lp24(const std::size_t idx, const std::endian endian = std::endian::native);
 
 			/*! \brief Read a 32-bit length prefixed little endian UTF-32 encoded string from the `bytearray_t`.
+
+				This method will read the first 32 bits at the offset `idx`, decode them as an unsigned integer according
+				to `endian` and use that as the number UTF-32 little endian codepoints to read directly after it.
+
+				It will ingest all control characters and null terminators up until the first byte is an invalid UTF-32
+				codepoint, or we hit the number of characters contained in the length prefix byte.
+
+				\code{.unparsed}
+				╭──────┬──────┬──────┬──────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN0 │ LEN1 │ LEN2 │ LEN2 │ String Data ┊
+				├──────┼──────┼──────┼──────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0      8     16     24     32            LEN
+				\endcode
 
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param endian The endian of the integer representing the string length prefix.
@@ -1218,6 +2129,19 @@ namespace Panko::core {
 
 			/*! \brief Read a 64-bit length prefixed little endian UTF-32 encoded string from the `bytearray_t`.
 
+				This method will read the first 64 bits at the offset `idx`, decode them as an unsigned integer according
+				to `endian` and use that as the number UTF-32 little endian codepoint to read directly after it.
+
+				It will ingest all control characters and null terminators up until the first byte is an invalid UTF-32
+				codepoint, or we hit the number of characters contained in the length prefix byte.
+
+				\code{.unparsed}
+				╭──────┬──────┬──────┬──────┬──────┬──────┬──────┬──────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN0 │ LEN1 │ LEN2 │ LEN2 │ LEN3 │ LEN4 │ LEN5 │ LEN6 │ String Data ┊
+				├──────┼──────┼──────┼──────┼──────┼──────┼──────┼──────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0      8     16     24     32     40     48     56     64            LEN
+				\endcode
+
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param endian The endian of the integer representing the string length prefix.
 			*/
@@ -1226,13 +2150,33 @@ namespace Panko::core {
 
 			/*! \brief Read a LEB128 length prefixed little endian UTF-32 encoded string from the `bytearray_t`.
 
+				This method will read up to 5 bytes at the offset `idx` to construct an LEB128 byte stream, decode that
+				as an unsigned integer and use that as the number of UTF-32 little endian codepoints to read directly
+				after it.
+
+				It will ingest all control characters and null terminators up until the first byte is an invalid UTF-32
+				codepoint, or we hit the number of characters contained in the length prefix byte.
+
+				\code{.unparsed}
+				╭──────┬┈┈┈┈┈┈┬──────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN0 │ .... │ LENN │ String Data ┊
+				├──────┼┈┈┈┈┈┈┼──────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0      8      N     N+8           LEN
+				\endcode
+
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 			*/
 			[[nodiscard]]
 			PANKO_CLS_API std::expected<std::u32string_view, strdec_error_t> string_utf32le_leb128(const std::size_t idx);
 
+			/* UTF-32 Big Endian */
 
 			/*! \brief Read a fixed width big endian UTF-32 encoded string from the `bytearray_t`.
+
+				This method reads a fixed number of bytes from the `bytearray_t` and decodes them as UTF-32 big-endian.
+
+				It will ingest up until the first invalid UTF-32 codepoint encountered or the target length is reached,
+				whichever occurs first.
 
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param len The length of the string.
@@ -1242,6 +2186,13 @@ namespace Panko::core {
 
 			/*! \brief Read a fixed length null padded big endian UTF-32 encoded string from the `bytearray_t`.
 
+				This method reads a fixed number of bytes from the `bytearray_t` and decodes them as UTF-32 big-endian.
+
+				It will ingest up until the first invalid UTF-32 codepoint encountered or the target length is reached,
+				whichever occurs first.
+
+				This method is effectively the same as `string_utf32be`.
+
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param len The length of the string.
 			*/
@@ -1249,6 +2200,12 @@ namespace Panko::core {
 			PANKO_CLS_API std::expected<std::u32string_view, strdec_error_t> string_utf32be_zp(const std::size_t idx, const std::size_t len);
 
 			/*! \brief Read a null-terminated big endian UTF-32 encoded string from the `bytearray_t`.
+
+				This method will read up until a null terminator or `max_len` and decode it as a UTF-32 big-endian
+				string.
+
+				It will ingest all control characters up until the first byte out of the UTF-32 codepoint,
+				it it's a null terminator, or we reach `max_len` if it non-zero, whichever occurs first.
 
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param max_len The maximum length of the string if the null terminator is not found, 0 for no limit.
@@ -1258,12 +2215,38 @@ namespace Panko::core {
 
 			/*! \brief Read an 8-bit length prefixed big endian UTF-32 encoded string from the `bytearray_t`.
 
+				This method will read the first 8 bits at the offset `idx` as an unsigned integer and use that as the
+				number of UTF-32 big endian codepoints to read directly after it.
+
+				It will ingest all control characters and null terminators up until the first byte is an invalid UTF-32
+				codepoint, or we hit the number of characters contained in the length prefix byte.
+
+				\code{.unparsed}
+				╭─────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN │ String Data ┊
+				├─────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0     8            LEN
+				\endcode
+
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 			*/
 			[[nodiscard]]
 			PANKO_CLS_API std::expected<std::u32string_view, strdec_error_t> string_utf32be_lp8(const std::size_t idx);
 
 			/*! \brief Read a 16-bit length prefixed big endian UTF-32 encoded string from the `bytearray_t`.
+
+				This method will read the first 16 bits at the offset `idx`, decode them as an unsigned integer according
+				to `endian` and use that as the number UTF-32 big endian codepoints to read directly after it.
+
+				It will ingest all control characters and null terminators up until the first byte is an invalid UTF-32
+				codepoint, or we hit the number of characters contained in the length prefix byte.
+
+				\code{.unparsed}
+				╭──────┬──────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN0 │ LEN1 │ String Data ┊
+				├──────┼──────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0      8     16            LEN
+				\endcode
 
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param endian The endian of the integer representing the string length prefix.
@@ -1273,6 +2256,19 @@ namespace Panko::core {
 
 			/*! \brief Read a 24-bit length prefixed big endian UTF-32 encoded string from the `bytearray_t`.
 
+				This method will read the first 24 bits at the offset `idx`, decode them as an unsigned integer according
+				to `endian` and use that as the number UTF-32 big endian codepoints to read directly after it.
+
+				It will ingest all control characters and null terminators up until the first byte is an invalid UTF-32
+				codepoint, or we hit the number of characters contained in the length prefix byte.
+
+				\code{.unparsed}
+				╭──────┬──────┬──────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN0 │ LEN1 │ LEN2 │ String Data ┊
+				├──────┼──────┼──────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0      8     16     24            LEN
+				\endcode
+
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param endian The endian of the integer representing the string length prefix.
 			*/
@@ -1280,6 +2276,19 @@ namespace Panko::core {
 			PANKO_CLS_API std::expected<std::u32string_view, strdec_error_t> string_utf32be_lp24(const std::size_t idx, const std::endian endian = std::endian::native);
 
 			/*! \brief Read a 32-bit length prefixed big endian UTF-32 encoded string from the `bytearray_t`.
+
+				This method will read the first 32 bits at the offset `idx`, decode them as an unsigned integer according
+				to `endian` and use that as the number UTF-32 big endian codepoints to read directly after it.
+
+				It will ingest all control characters and null terminators up until the first byte is an invalid UTF-32
+				codepoint, or we hit the number of characters contained in the length prefix byte.
+
+				\code{.unparsed}
+				╭──────┬──────┬──────┬──────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN0 │ LEN1 │ LEN2 │ LEN2 │ String Data ┊
+				├──────┼──────┼──────┼──────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0      8     16     24     32            LEN
+				\endcode
 
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param endian The endian of the integer representing the string length prefix.
@@ -1289,6 +2298,19 @@ namespace Panko::core {
 
 			/*! \brief Read a 64-bit length prefixed big endian UTF-32 encoded string from the `bytearray_t`.
 
+				This method will read the first 64 bits at the offset `idx`, decode them as an unsigned integer according
+				to `endian` and use that as the number UTF-32 big endian codepoint to read directly after it.
+
+				It will ingest all control characters and null terminators up until the first byte is an invalid UTF-32
+				codepoint, or we hit the number of characters contained in the length prefix byte.
+
+				\code{.unparsed}
+				╭──────┬──────┬──────┬──────┬──────┬──────┬──────┬──────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN0 │ LEN1 │ LEN2 │ LEN2 │ LEN3 │ LEN4 │ LEN5 │ LEN6 │ String Data ┊
+				├──────┼──────┼──────┼──────┼──────┼──────┼──────┼──────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0      8     16     24     32     40     48     56     64            LEN
+				\endcode
+
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param endian The endian of the integer representing the string length prefix.
 			*/
@@ -1297,15 +2319,33 @@ namespace Panko::core {
 
 			/*! \brief  Read a LEB128 length prefixed big endian UTF-32 encoded string from the `bytearray_t`.
 
+				This method will read up to 5 bytes at the offset `idx` to construct an LEB128 byte stream, decode that
+				as an unsigned integer and use that as the number of UTF-32 big endian codepoints to read directly after
+				it.
+
+				It will ingest all control characters and null terminators up until the first byte is an invalid UTF-32
+				codepoint, or we hit the number of characters contained in the length prefix byte.
+
+				\code{.unparsed}
+				╭──────┬┈┈┈┈┈┈┬──────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN0 │ .... │ LENN │ String Data ┊
+				├──────┼┈┈┈┈┈┈┼──────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0      8      N     N+8           LEN
+				\endcode
+
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 			*/
 			[[nodiscard]]
 			PANKO_CLS_API std::expected<std::u32string_view, strdec_error_t> string_utf32be_leb128(const std::size_t idx);
 
-
 			/* SHIFT-JIS */
 
 			/*! \brief Read a fixed width SHIFT-JIS encoded string from the `bytearray_t`.
+
+				This method reads a fixed number of bytes from the `bytearray_t` and decodes them as SHIFT-JIS.
+
+				It will ingest up until the first invalid SHIFT-JIS codepoint encountered or the target length is
+				reached, whichever occurs first.
 
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param len The length of the string.
@@ -1315,6 +2355,13 @@ namespace Panko::core {
 
 			/*! \brief Read a fixed length null padded SHIFT-JIS encoded string from the `bytearray_t`.
 
+				This method reads a fixed number of bytes from the `bytearray_t` and decodes them as SHIFT-JIS.
+
+				It will ingest up until the first invalid SHIFT-JIS codepoint encountered or the target length is
+				reached, whichever occurs first.
+
+				This method is effectively the same as `string_shiftjis`.
+
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param len The length of the string.
 			*/
@@ -1322,6 +2369,11 @@ namespace Panko::core {
 			PANKO_CLS_API std::expected<std::wstring_view, strdec_error_t> string_shiftjis_zp(const std::size_t idx, const std::size_t len);
 
 			/*! \brief Read a null-terminated SHIFT-JIS encoded string from the `bytearray_t`.
+
+				This method will read up until a null terminator or `max_len` and decode it as a SHIFT-JIS string.
+
+				It will ingest all control characters up until the first byte out of the SHIFT-JIS codepoint,
+				it it's a null terminator, or we reach `max_len` if it non-zero, whichever occurs first.
 
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param max_len The maximum length of the string if the null terminator is not found, 0 for no limit.
@@ -1331,12 +2383,38 @@ namespace Panko::core {
 
 			/*! \brief Read an 8-bit length prefixed SHIFT-JIS encoded string from the `bytearray_t`.
 
+				This method will read the first 8 bits at the offset `idx` as an unsigned integer and use that as the
+				number of SHIFT-JSI codepoints to read directly after it.
+
+				It will ingest all control characters and null terminators up until the first byte is an invalid
+				SHIFT-JIS codepoint, or we hit the number of characters contained in the length prefix byte.
+
+				\code{.unparsed}
+				╭─────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN │ String Data ┊
+				├─────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0     8            LEN
+				\endcode
+
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 			*/
 			[[nodiscard]]
 			PANKO_CLS_API std::expected<std::wstring_view, strdec_error_t> string_shiftjis_lp8(const std::size_t idx);
 
 			/*! \brief Read a 16-bit length prefixed SHIFT-JIS encoded string from the `bytearray_t`.
+
+				This method will read the first 16 bits at the offset `idx`, decode them as an unsigned integer according
+				to `endian` and use that as the number SHIFT-JIS codepoints to read directly after it.
+
+				It will ingest all control characters and null terminators up until the first byte is an invalid
+				SHIFT-JIS codepoint, or we hit the number of characters contained in the length prefix byte.
+
+				\code{.unparsed}
+				╭──────┬──────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN0 │ LEN1 │ String Data ┊
+				├──────┼──────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0      8     16            LEN
+				\endcode
 
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param endian The endian of the integer representing the string length prefix.
@@ -1346,6 +2424,19 @@ namespace Panko::core {
 
 			/*! \brief Read a 24-bit length prefixed SHIFT-JIS encoded string from the `bytearray_t`.
 
+				This method will read the first 24 bits at the offset `idx`, decode them as an unsigned integer according
+				to `endian` and use that as the number SHIFT-JIS codepoints to read directly after it.
+
+				It will ingest all control characters and null terminators up until the first byte is an invalid
+				SHIFT-JIS codepoint, or we hit the number of characters contained in the length prefix byte.
+
+				\code{.unparsed}
+				╭──────┬──────┬──────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN0 │ LEN1 │ LEN2 │ String Data ┊
+				├──────┼──────┼──────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0      8     16     24            LEN
+				\endcode
+
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param endian The endian of the integer representing the string length prefix.
 			*/
@@ -1353,6 +2444,19 @@ namespace Panko::core {
 			PANKO_CLS_API std::expected<std::wstring_view, strdec_error_t> string_shiftjis_lp24(const std::size_t idx, const std::endian endian = std::endian::native);
 
 			/*! \brief Read a 32-bit length prefixed SHIFT-JIS encoded string from the `bytearray_t`.
+
+				This method will read the first 32 bits at the offset `idx`, decode them as an unsigned integer according
+				to `endian` and use that as the number SHIFT-JIS codepoints to read directly after it.
+
+				It will ingest all control characters and null terminators up until the first byte is an invalid
+				SHIFT-JIS codepoint, or we hit the number of characters contained in the length prefix byte.
+
+				\code{.unparsed}
+				╭──────┬──────┬──────┬──────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN0 │ LEN1 │ LEN2 │ LEN2 │ String Data ┊
+				├──────┼──────┼──────┼──────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0      8     16     24     32            LEN
+				\endcode
 
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param endian The endian of the integer representing the string length prefix.
@@ -1362,6 +2466,19 @@ namespace Panko::core {
 
 			/*! \brief Read a 64-bit length prefixed SHIFT-JIS encoded string from the `bytearray_t`.
 
+				This method will read the first 64 bits at the offset `idx`, decode them as an unsigned integer according
+				to `endian` and use that as the number SHIFT-JIS codepoint to read directly after it.
+
+				It will ingest all control characters and null terminators up until the first byte is an invalid
+				SHIFT-JIS codepoint, or we hit the number of characters contained in the length prefix byte.
+
+				\code{.unparsed}
+				╭──────┬──────┬──────┬──────┬──────┬──────┬──────┬──────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN0 │ LEN1 │ LEN2 │ LEN2 │ LEN3 │ LEN4 │ LEN5 │ LEN6 │ String Data ┊
+				├──────┼──────┼──────┼──────┼──────┼──────┼──────┼──────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0      8     16     24     32     40     48     56     64            LEN
+				\endcode
+
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 				\param endian The endian of the integer representing the string length prefix.
 			*/
@@ -1370,15 +2487,31 @@ namespace Panko::core {
 
 			/*! \brief  Read a LEB128 length prefixed SHIFT-JIS encoded string from the `bytearray_t`.
 
+				This method will read up to 5 bytes at the offset `idx` to construct an LEB128 byte stream, decode that
+				as an unsigned integer and use that as the number of SHIFT-JIS codepoints to read directly after it.
+
+				It will ingest all control characters and null terminators up until the first byte is an invalid
+				SHIFT-JIS codepoint, or we hit the number of characters contained in the length prefix byte.
+
+				\code{.unparsed}
+				╭──────┬┈┈┈┈┈┈┬──────┬┈┈┈┈┈┈┈┈┈┈┈┈┈╮
+				│ LEN0 │ .... │ LENN │ String Data ┊
+				├──────┼┈┈┈┈┈┈┼──────┼┈┈┈┈┈┈┈┈┈┈┈┈┈┤
+				0      8      N     N+8           LEN
+				\endcode
+
 				\param idx The offset into the `bytearray_t` to start the extraction from.
 			*/
 			[[nodiscard]]
 			PANKO_CLS_API std::expected<std::wstring_view, strdec_error_t> string_shiftjis_leb128(const std::size_t idx);
 
-
+			/* == Decompression Helpers == */
 
 			#if defined(PANKO_WITH_BROTLI)
 			/*! \brief Decompress brotli compressed data into a new `bytearray_t`
+
+				This method decompresses a block of data starting at `idx` that is `len` bytes long with the brotli
+				decompression method.
 
 				\note
 				The returned `bytearray_t` owns it's buffer, as such the memory will be automatically reclaimed
@@ -1394,6 +2527,9 @@ namespace Panko::core {
 
 			/*! \brief Decompress bz2 compressed data into a new `bytearray_t`
 
+				This method decompresses a block of data starting at `idx` that is `len` bytes long with the bzip2
+				decompression method.
+
 				\note
 				The returned `bytearray_t` owns it's buffer, as such the memory will be automatically reclaimed
 				when the last reference to it dies unless an explicit call to `bytearray_t::disown` is called to get
@@ -1406,6 +2542,9 @@ namespace Panko::core {
 			PANKO_CLS_API std::expected<bytearray_t, decomp_error_t> decompress_bz2(const std::size_t idx, const std::size_t len);
 
 			/*! \brief Decompress zlib DEFLATE compressed data into a new `bytearray_t`
+
+				This method decompresses a block of data starting at `idx` that is `len` bytes long with the zlib DEFLATE
+				decompression method.
 
 				\note
 				The returned `bytearray_t` owns it's buffer, as such the memory will be automatically reclaimed
@@ -1420,6 +2559,9 @@ namespace Panko::core {
 
 			/*! \brief Decompress LZ4 compressed data into a new `bytearray_t`
 
+				This method decompresses a block of data starting at `idx` that is `len` bytes long with the LZ4
+				decompression method.
+
 				\note
 				The returned `bytearray_t` owns it's buffer, as such the memory will be automatically reclaimed
 				when the last reference to it dies unless an explicit call to `bytearray_t::disown` is called to get
@@ -1432,6 +2574,9 @@ namespace Panko::core {
 			PANKO_CLS_API std::expected<bytearray_t, decomp_error_t> decompress_lz4(const std::size_t idx, const std::size_t len);
 
 			/*! \brief Decompress LZ77 compressed data into a new `bytearray_t`
+
+				This method decompresses a block of data starting at `idx` that is `len` bytes long with the LZ77
+				decompression method.
 
 				\note
 				The returned `bytearray_t` owns it's buffer, as such the memory will be automatically reclaimed
@@ -1446,6 +2591,9 @@ namespace Panko::core {
 
 			/*! \brief Decompress LZ77+Huffman compressed data into a new `bytearray_t`
 
+				This method decompresses a block of data starting at `idx` that is `len` bytes long with the LZ77 with
+				Huffman tables decompression method.
+
 				\note
 				The returned `bytearray_t` owns it's buffer, as such the memory will be automatically reclaimed
 				when the last reference to it dies unless an explicit call to `bytearray_t::disown` is called to get
@@ -1458,6 +2606,9 @@ namespace Panko::core {
 			PANKO_CLS_API std::expected<bytearray_t, decomp_error_t> decompress_lz77huff(const std::size_t idx, const std::size_t len);
 
 			/*! \brief Decompress LZMA compressed data into a new `bytearray_t`
+
+				This method decompresses a block of data starting at `idx` that is `len` bytes long with the LZMA
+				decompression method.
 
 				\note
 				The returned `bytearray_t` owns it's buffer, as such the memory will be automatically reclaimed
@@ -1472,6 +2623,9 @@ namespace Panko::core {
 
 			/*! \brief Decompress LZNT1 compressed data into a new `bytearray_t`
 
+				This method decompresses a block of data starting at `idx` that is `len` bytes long with the LZNT1
+				decompression method.
+
 				\note
 				The returned `bytearray_t` owns it's buffer, as such the memory will be automatically reclaimed
 				when the last reference to it dies unless an explicit call to `bytearray_t::disown` is called to get
@@ -1482,9 +2636,12 @@ namespace Panko::core {
 			*/
 			[[nodiscard]]
 			PANKO_CLS_API std::expected<bytearray_t, decomp_error_t> decompress_lznt1(const std::size_t idx, const std::size_t len);
-			#if defined(PANKO_WITH_SNAPPY)
 
+			#if defined(PANKO_WITH_SNAPPY)
 			/*! \brief Decompress snappy compressed data into a new `bytearray_t`
+
+				This method decompresses a block of data starting at `idx` that is `len` bytes long with the snappy
+				decompression method.
 
 				\note
 				The returned `bytearray_t` owns it's buffer, as such the memory will be automatically reclaimed
@@ -1500,6 +2657,9 @@ namespace Panko::core {
 
 			/*! \brief Decompress XZ compressed data into a new `bytearray_t`
 
+				This method decompresses a block of data starting at `idx` that is `len` bytes long with the XZ
+				decompression method.
+
 				\note
 				The returned `bytearray_t` owns it's buffer, as such the memory will be automatically reclaimed
 				when the last reference to it dies unless an explicit call to `bytearray_t::disown` is called to get
@@ -1512,6 +2672,9 @@ namespace Panko::core {
 			PANKO_CLS_API std::expected<bytearray_t, decomp_error_t> decompress_xz(const std::size_t idx, const std::size_t len);
 
 			/*! \brief Decompress ZSTD compressed data into a new `bytearray_t`
+
+				This method decompresses a block of data starting at `idx` that is `len` bytes long with the ZSTD
+				decompression method.
 
 				\note
 				The returned `bytearray_t` owns it's buffer, as such the memory will be automatically reclaimed
