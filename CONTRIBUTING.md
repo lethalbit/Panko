@@ -35,8 +35,8 @@ If you are going to be running the fuzzing harnesses, then note the following de
 
 * [protobuf]
 * [libprotobuf-mutator]
-* [llvm] >= 17
-* clang >= 17
+* [llvm] >= 19
+* clang >= 19
 
 Both [protobuf] and [libprotobuf-mutator] will be handled by meson automatically when building.
 

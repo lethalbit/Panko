@@ -36,7 +36,7 @@ To build Panko, ensure you have the following build time dependencies:
 * git
 * meson
 * ninja
-* g++ >= 13 or clang++ >= 18
+* g++ >= 14 or clang++ >= 19
 
 In addition, the following dependencies are needed to build but have built-in build support if not present on the build system:
 
@@ -64,7 +64,7 @@ The following dependencies are needed for testing and fuzzing:
 * [Doctest]
 * [protobuf]
 * [libprotobuf-mutator]
-* [llvm] >= 17
+* [llvm] >= 19
 
 The [protobuf], [libprotobuf-mutator], and [llvm] dependencies are only needed if you're doing fuzzing, otherwise only [Doctest] is used.
 

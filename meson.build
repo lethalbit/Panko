@@ -25,6 +25,21 @@ if cxx_std not in ['c++23', 'gnu++23']
 	error(f'Unsupported C++ Version @cxx_std@, must be c++23/gnu++23 or newer')
 endif
 
+# Not all C++23 compliant compilers ship with everything
+contentious_headers = [
+	'format',
+	'print',
+	'bit',
+]
+
+foreach header : contentious_headers
+	if not cxx.has_header(header)
+		error(f'You\'re compiler does not seem to have full C++23 support (missing header @header@')
+		error('GCC version >= 14 or clang version >= 18 are required to build Panko')
+	endif
+endforeach
+
+
 extended_warnings = [
 	'-Wdouble-promotion',
 	'-Wformat=2',
