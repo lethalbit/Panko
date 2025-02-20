@@ -7,6 +7,7 @@ libpanko_srcs += files([
 ])
 
 libpanko_core_headers = files([
+	'bitfield.hh',
 	'bytearray.hh',
 	'errcodes.hh',
 	'integers.hh',
