@@ -44,10 +44,9 @@ namespace Panko::core {
 			using type = T;
 		};
 
-		/* BUG(aki): I have no idea *why* this is not working properly but alas */
 		template<std::size_t bits>
 		using smallest_type_for = std::tuple_element_t<
-			((bits + 7) / 8), std::tuple<
+			((bits + 7U) / 8U) - 1U, std::tuple<
 			std::uint8_t,  /* <= 1 byte  */
 			std::uint16_t, /* <= 2 bytes */
 			std::uint32_t, /* <= 3 bytes */
