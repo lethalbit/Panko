@@ -118,6 +118,10 @@ fs               = import('fs')
 pkgconfig        = import('pkgconfig')
 py               = import('python')
 
+if not is_linux
+	warning('Platforms other than Linux are highly experimental, be warned')
+endif
+
 # Because this is added prior to add_project_arguments we don't need to gate it
 # on compiler support
 if mtune != 'default'
@@ -268,6 +272,22 @@ kde_integration = get_option('kde_integration').require(
 	(kf6_core.found() and kf6_crash.found() and kf6_win.found()) and build_gui.allowed(),
 	error_message: 'KDE Integrataion requires KDE Framework 6 and building the GUI to be enabled'
 )
+
+summary({
+	'Python Version': py.language_version(),
+	'pybind11 Version': pybind11.version(),
+	'Lua Backend': lua_backend,
+	'Lua Version': lua_dep.version(),
+	'Has brotli support': with_brotli,
+	'Has snappy support': with_snappy,
+	'Catgirl': 'ニャ〜'
+}, bool_yn: true, section: 'Dissector Engine')
+
+if build_gui.allowed()
+	summary({
+		'KDE Integration': kde_integration.allowed(),
+	}, bool_yn: true, section: 'GUI')
+endif
 
 subdir('contrib')
 subdir('src')
