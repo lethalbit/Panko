@@ -2,7 +2,6 @@
 
 libpanko_internal_headers = files([
 	'defs.hh',
-	'frontend.hh',
 ])
 
 
