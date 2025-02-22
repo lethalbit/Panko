@@ -124,6 +124,6 @@ The documentation is licensed under the Creative Commons [CC-BY-SA 4.0] and can 
 [llvm]: https://llvm.org/
 [`meson.options`]: ./meson.options
 [BSD-3-Clause]: https://spdx.org/licenses/BSD-3-Clause.htm
-[`LICENSE`]: ./LICENSE.md
+[`LICENSE`]: ./LICENSE
 [CC-BY-SA 4.0]: https://creativecommons.org/licenses/by-sa/4.0/
 [`LICENSE.docs`]: ./LICENSE.docs
