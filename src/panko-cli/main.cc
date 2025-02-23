@@ -18,6 +18,8 @@
 namespace fs  = std::filesystem;
 namespace cfg = Panko::config;
 
+using namespace std::literals::string_view_literals;
+
 const auto panko_version{std::format(
 	"{} ({} {} {}-{})"sv,
 	cfg::version_full, cfg::compiler_name, cfg::compiler_version, cfg::target_system, cfg::target_arch
