@@ -6,7 +6,7 @@ libpanko_internal_headers = files([
 
 
 libpanko_srcs += files([
-	'frontend.cc',
+
 ])
 
 install_headers(libpanko_internal_headers, subdir: 'panko/internal')

@@ -11,7 +11,6 @@
 #include <spdlog/sinks/stdout_color_sinks.h>
 
 #include "panko/internal/defs.hh"
-#include "panko/internal/frontend.hh"
 #include "panko/support/sys.hh"
 #include "panko/support/paths.hh"
 #include "panko/config.hh"
