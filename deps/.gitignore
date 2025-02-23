@@ -1,6 +1,7 @@
 *
 !.gitignore
 !bzip2.wrap
+!cxxopts.wrap
 !doctest.wrap
 !google-brotli.wrap
 !google-snappy.wrap

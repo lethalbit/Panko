@@ -41,6 +41,7 @@ To build Panko, ensure you have the following build time dependencies:
 In addition, the following dependencies are needed to build but have built-in build support if not present on the build system:
 
 * [brotli] (only if `with_brotli` is specified)
+* [cxxopts]
 * [libbzip2]
 * [liblz4]
 * [liblzma]
@@ -114,6 +115,7 @@ The documentation is licensed under the Creative Commons [CC-BY-SA 4.0] and can 
 [snappy]: https://github.com/google/snappy
 [spdlog]: https://github.com/gabime/spdlog
 [tomlplusplus]: https://github.com/marzer/tomlplusplus
+[cxxopts]: https://github.com/jarro2783/cxxopts
 [zlib]: https://www.zlib.net/
 [zstd]: https://github.com/facebook/zstd
 [Qt6]: https://www.qt.io/product/qt6

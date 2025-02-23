@@ -32,7 +32,7 @@ panko_gui = executable(
 	],
 	gnu_symbol_visibility: 'inlineshidden',
 	dependencies: [
-		threads, qt_dep, kde_libs, spdlog, tomlpp
+		threads, qt_dep, kde_libs, spdlog, tomlpp, cxxopts,
 	],
 	link_with: [
 		libpanko,

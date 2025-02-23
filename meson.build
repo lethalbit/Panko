@@ -167,6 +167,8 @@ luajit    = dependency('luajit',   required: false, version: '>=2.1' )
 # Optional/Feature deps for core
 brotli    = dependency('libbrotlidec',  required: false, version: '>=1.1.0')
 snappy    = dependency('snappy',        required: false, version: '>=1.1.0')
+# GUI/CLI Common
+cxxopts   = dependency('cxxopts', required: false, version: '>=3.2.0')
 # GUI
 qt_dep    = dependency('qt6',      modules: qt_modules, required: false)
 # GUI - KDE Integration
@@ -259,6 +261,12 @@ if with_snappy and not snappy.found()
 	message('Did not find local brotli install and brotli was requested, bundling')
 	snappy_wrap = subproject('google-snappy', default_options: [])
 	snappy = snappy_wrap.get_variable('snappy_dep')
+endif
+
+if not cxxopts.found()
+	message('Did not find local cxxopts install, bundling')
+	cxxopts_wrap = subproject('cxxopts', default_options: [])
+	cxxopts = cxxopts_wrap.get_variable('cxxopts_dep')
 endif
 
 # GUI - Disable GUI if we don't have QT

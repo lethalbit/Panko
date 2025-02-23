@@ -16,7 +16,7 @@ panko_cli = executable(
 	],
 	gnu_symbol_visibility: 'inlineshidden',
 	dependencies: [
-		threads, spdlog, tomlpp
+		threads, spdlog, tomlpp, cxxopts,
 	],
 	link_with: [
 		libpanko,
