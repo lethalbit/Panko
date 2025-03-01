@@ -42,6 +42,7 @@ In addition, the following dependencies are needed to build but have built-in bu
 
 * [brotli] (only if `with_brotli` is specified)
 * [cxxopts]
+* [frozen]
 * [libbzip2]
 * [liblz4]
 * [liblzma]
@@ -106,6 +107,7 @@ The documentation is licensed under the Creative Commons [CC-BY-SA 4.0] and can 
 [extcap]: https://www.wireshark.org/docs/wsdg_html_chunked/ChCaptureExtcap.html
 [Wireshark]: https://gitlab.com/wireshark/wireshark
 [brotli]: https://github.com/google/brotli
+[frozen]: https://github.com/serge-sans-paille/frozen
 [libbzip2]: https://www.sourceware.org/bzip2/
 [liblz4]: https://github.com/lz4/lz4
 [liblzma]: https://github.com/tukaani-project/xz

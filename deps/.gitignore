@@ -3,6 +3,7 @@
 !bzip2.wrap
 !cxxopts.wrap
 !doctest.wrap
+!frozen.wrap
 !google-brotli.wrap
 !google-snappy.wrap
 !liblzma.wrap

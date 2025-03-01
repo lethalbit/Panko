@@ -23,6 +23,15 @@
 </p>
 
 <p>
+	<h3>frozen</h3>
+	<ul>
+		<li>License: <a href="https://spdx.org/licenses/Apache-2.0.html">Apache-2.0</a></li>
+
+		<li>URL: <a href="https://github.com/serge-sans-paille/frozen"> https://github.com/serge-sans-paille/frozen</a></li>
+	</ul>
+</p>
+
+<p>
 	<h3>KDE Frameworks</h3>
 	<ul>
 		<li>License: <a href="https://spdx.org/licenses/LGPL-3.0-only.html">LGPL-3.0-only</a><</li>

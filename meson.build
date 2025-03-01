@@ -154,6 +154,7 @@ endif
 # Core deps
 threads   = dependency('threads', required: true)
 spdlog    = dependency('spdlog',  required: false, version: '>=1.15.1')
+frozen    = dependency('frozen',  required: false, version: '>=1.1.1')
 # Compressed PCAP/PCAPNG Reading
 bzip2     = dependency('bzip2',   required: false, version: '>=1.0.8'  )
 liblzma   = dependency('liblzma', required: false, version: '>=5.2.12' )
@@ -184,6 +185,12 @@ if not spdlog.found()
 	message('Did not find local spdlog install, bundling')
 	spdlog_wrap = subproject('spdlog', default_options: [])
 	spdlog = spdlog_wrap.get_variable('spdlog_dep')
+endif
+
+if not frozen.found()
+	message('Did not find local frozen install, bundling')
+	frozen_wrap = subproject('frozen', default_options: [])
+	frozen = frozen_wrap.get_variable('frozen_dep')
 endif
 
 if not bzip2.found()

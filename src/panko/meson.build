@@ -104,7 +104,7 @@ libpanko = library(
 	],
 	gnu_symbol_visibility: 'inlineshidden',
 	dependencies: [
-		threads, spdlog, bzip2, liblzma, lz4, zlib, zstd,
+		threads, spdlog, frozen, bzip2, liblzma, lz4, zlib, zstd,
 		py.dependency(embed: true), pybind11, lua_dep,
 
 		extra_deps
