@@ -13,7 +13,7 @@ project(
 	],
 	license: 'BSD-3-Clause',
 	license_files: 'LICENSE',
-	version: '0.1.0',
+	version: '0.1.0-alpha0',
 	meson_version: '>= 1.4.0',
 	subproject_dir: 'deps'
 )
@@ -34,8 +34,7 @@ contentious_headers = [
 
 foreach header : contentious_headers
 	if not cxx.has_header(header)
-		error(f'You\'re compiler does not seem to have full C++23 support (missing header @header@')
-		error('GCC version >= 14 or clang version >= 18 are required to build Panko')
+		error(f'You\'re compiler does not seem to have full C++23 support (missing header @header@)\nGCC version >= 14 or clang version >= 18 are required to build Panko')
 	endif
 endforeach
 
